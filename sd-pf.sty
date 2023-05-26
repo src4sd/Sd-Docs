@@ -1,0 +1,1236 @@
+%------------------------------------------------------------------------------
+%   sd-pf.sty   Copyright (C) Atsushi Takeuchi, 1992,1993,1994
+%
+%       v1.00   1992/10/18  by Atsushi Takeuchi
+%       v1.01   1992/12/14
+%                   change \formation to \sdform
+%                   add \phcircle
+%                   bug fix
+%       v1.02   1993/04/29
+%                   rewrite all macros, using \priform offset option
+%                   change diamond macros from 4x2 to 3x2
+%                   change star macro from 3x3 to 2x2
+%                   change thar macros from 5x5 to 4x4
+%                   add another thar macros
+%       v1.03   1993/08/10
+%                   add \pStar (2.5x2.5 star)
+%                   add \phvThar \plrThar (4.5x4.5 thar)
+%       v1.04   1994/03/30
+%                   add \phspindle \pvspindle
+%                   add \pscircle
+%       v1.05   1994/05/26
+%                   append border width to some macros
+%       v1.06   1994/07/23
+%                   bug fix
+%       v1.08   2004/06/20 Bill Ackerman
+%                   Add 1x6, 1x8, 6x1, 8x1 setups
+%       v1.09   2014/03/22 Bill Ackerman
+%                   Add 3x1 diamond, 3x1 triangle setups, and stars.
+%       v1.10   2014/04/04 Bill Ackerman
+%                   Add phcrosswave, pvcrosswave, phdiamonds, pvdiamonds.
+%       v1.11   2021/11/23 Sue Curtis
+%                   Add phptpd, pvptpd
+%
+%   This file contains primitive formation macros.
+%   These macros can be used in \sdform as a dancer.
+%   Use this style file with sd.sty.  For example:
+%
+%       \documentclass[12pt]{article}
+%       \usepackage{tex-squares}
+%       \usepackage{sd}
+%       \usepackage{sd-pf}
+%       \usepackage{sd-sf}
+%       \usepackage{sd-sf12}
+%
+%----------------------------- MACRO LIST -------------------------------------
+%
+%<< General syntax >>
+%
+%   \XXXXX[HOFF,VOFF]{D1,D2,...,Dn}
+%
+%       XXXX: macro name of primitive formation. it begins with p.
+%       HOFF: horizontal offset(%) of the dancers from the matrix point.
+%       VOFF: vertical   offset(%) of the dancers from the matrix point.
+%           : [HOFF,VOFF] is optional, default is [0,0]
+%
+%       Dn  : string of 3 characters.
+%           : 1st character means dancer frame.
+%           :    b is box, g is circle, p is dashed box, "." is no frame.
+%           : 2nd character means character in the frame.
+%           :   every normal letter is OK, but "." means no character.
+%           : 3rd character means direction of dancer.
+%           :   .(none) n(north) s(south) e(east) w(west)
+%           :   1(north-east) 2(north-west) 3(south-west) 4(south-west)
+%           :   v(n and s) h(e and w) r(1 and 3) l(2 and 4)
+%           :   +(n and s and e and w) x(1 and 2 and 3 and 4)
+%
+%       ex. :   \phfour{b1n,g1s,g2n,b2s} is a horizontal right hand wave.
+%               \phBB{b1n,g1n,g2s,b2s}   is a right hand box.
+%
+%<< 1 x 2 >>
+%   \phtwo{D1,D2}           :   D1 D2
+%
+%<< 2 x 1 >>
+%   \pvtwo{D1,D2}           :   D1
+%                               D2
+%
+%<< 1 x 3 >>
+%   \phthree{D1,D2,D3}      :   D1 D2 D3
+%
+%<< 3 x 1 >>
+%   \pvthree{D1,D2,D3}      :   D1
+%                               D2
+%                               D3
+%
+%<< triangle >>
+%   \pwtriangle{D1,D2,D3}   :       D2
+%                               D1
+%                                   D3
+%
+%   \pntriangle{D1,D2,D3}   :     D1
+%                               D3  D2
+%
+%   \petriangle{D1,D2,D3}   :   D3
+%                                   D1
+%                               D2
+%
+%   \pstriangle{D1,D2,D3}   :   D2  D3
+%                                 D1
+%
+%<< 1 x 4 >>
+%   \phfour{D1,D2,D3,D4}    :   D1 D2 D3 D4
+%
+%<< 4 x 1 >>
+%   \pvfour{D1,D2,D3,D4}    :   D1
+%                               D2
+%                               D3
+%                               D4
+%
+%<< 1 x 6 >>
+%   \phsix{D1,D2,D3,D4,D5,D6}:   D1 D2 D3 D4 D5 D6
+%
+%<< 6 x 1 >>
+%   \pvsix{D1,D2,D3,D4}     :   D1
+%                               D2
+%                               D3
+%                               D4
+%                               D5
+%                               D6
+%
+%<< 1 x 8 >>
+%   \pheight{D1,D2,D3,D4,D5,D6,D7,D8}:   D1 D2 D3 D4 D5 D6 D7 D8
+%
+%<< 8 x 1 >>
+%   \pveight{D1,D2,D3,D4,D5,D6,D7,D8}:D1
+%                                     D2
+%                                     D3
+%                                     D4
+%                                     D5
+%                                     D6
+%                                     D7
+%                                     D8
+%
+%<< 2 x 2 >>
+%   \phBB{D1,D2,D3,D4}      :   D1 D3
+%                               D2 D4
+%
+%   \phDU{D1,D2}            :      D2
+%                               D1
+%
+%   \phUD{D1,D2}            :   D1
+%                                  D2
+%
+%<< diamond >>
+%   \phdiamond{D1,D2,D3,D4} :        D2
+%                               D1        D3
+%                                    D4
+%
+%   \pvdiamond{D1,D2,D3,D4} :         D1
+%
+%                                   D4  D2
+%
+%                                     D3
+%
+%<< star >>
+%   \pstar{D1,D2,D3,D4} :
+%   \pStar{D1,D2,D3,D4} :             D2
+%                                   D1  D3
+%                                     D4
+%
+%<< T >>
+%   \pstee{D1,D2,D3,D4}     :   D1  D2
+%                                 D3
+%                                 D4
+%
+%   \pwtee{D1,D2,D3,D4}     :         D1
+%                               D4 D3
+%                                     D2
+%
+%   \pntee{D1,D2,D3,D4}     :     D4
+%                                 D3
+%                               D2  D1
+%
+%   \petee{D1,D2,D3,D4}     :   D2
+%                                  D3 D4
+%                               D1
+%
+%<< 2 x 3 >>
+%   \phBBB{D1,D2,D3,D4,D5,D6}   :   D1 D3 D5
+%                                   D2 D4 D6
+%
+%<< 3 x 2 >>
+%   \pvBBB{D1,D2,D3,D4,D5,D6}   :   D2 D1
+%                                   D4 D3
+%                                   D6 D5
+%
+%<< 2 x 4 >>
+%   \phBBBB{D1,D2,D3,D4,D5,D6,D7,D8}    :   D1 D3 D5 D7
+%                                           D2 D4 D6 D8
+%
+%<< 4 x 2 >>
+%   \pvBBBB{D1,D2,D3,D4,D5,D6,D7,D8}    :   D2 D1
+%                                           D4 D3
+%                                           D6 D5
+%                                           D8 D7
+%
+%<< 4 x 4  restricted, people in northwest spots >>
+%   \pBBBBNW{D1,D2,D3,D4,D5,D6,D7,D8}    :  D1    D5
+%                                              D3    D7
+%                                           D2    D6
+%                                              D4    D8
+%
+%  You should use '...' for other phantoms.
+%
+%  pBBBBNWplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 4 x 4  restricted, people in northeast spots >>
+%   \pBBBBNE{D1,D2,D3,D4,D5,D6,D7,D8}    :     D3    D7
+%                                           D1    D5
+%                                              D4    D8
+%                                           D2    D6
+%
+%  You should use '...' for other phantoms.
+%
+%  pBBBBNEplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< twin diamonds >>
+%   \pvdiamonds{D1,D2,D3,D4,D5,D6,D7,D8}   :         D2
+%                                              D1          D3
+%                                                    D4
+%
+%                                                    D8
+%                                              D7          D5
+%                                                    D6
+%
+%
+%   \phdiamonds{D1,D2,D3,D4,D5,D6,D7,D8}   :     D7      D1
+%
+%                                              D6  D8  D4  D2
+%
+%                                                D5      D3
+%
+%<< hourglass >>
+%   \phhourglass{D1,D2,D3,D4,D5,D6,D7,D8}   :         D2
+%                                               D1          D3
+%                                                   D8  D4
+%                                               D7          D5
+%                                                     D6
+%
+%   \pvhourglass{D1,D2,D3,D4,D5,D6,D7,D8}   :     D7    D1
+%                                                    D8
+%                                               D6        D2
+%                                                    D4
+%                                                 D5    D3
+%
+%<< 1/4 tag >>
+%   \phqtag{D1,D2,D3,D4,D5,D6,D7,D8}   :          D1 D2
+%                                              D3 D4 D5 D6
+%                                                 D7 D8
+%
+%   \pvqtag{D1,D2,D3,D4,D5,D6,D7,D8}   :          D3
+%                                              D7 D4 D1
+%                                              D8 D5 D2
+%                                                 D6
+%
+%<< rigger >>
+%   \phrigger{D1,D2,D3,D4,D5,D6,D7,D8}   :           D1 D2
+%                                              D3 D4       D5 D6
+%                                                    D7 D8
+%
+%   \pvrigger{D1,D2,D3,D4,D5,D6,D7,D8}   :        D3
+%                                                 D4
+%                                               D7  D1
+%                                               D8  D2
+%                                                 D5
+%                                                 D6
+%
+%<< stars >>
+%   \phstar{D1,D2,D3,D4,D5,D6,D7,D8}    :     D7     D1
+%                                           D6  D8 D4  D2
+%                                             D5     D3
+%
+%   \pvstar{D1,D2,D3,D4,D5,D6,D7,D8}    :     D2
+%                                           D1  D3
+%                                             D4
+%                                             D8
+%                                           D7  D5
+%                                             D6
+%
+%<< galaxy >>
+%   \phgalaxy{D1,D2,D3,D4,D5,D6,D7,D8}      :        D2
+%                                                  D1  D3
+%                                               D8        D4
+%                                                  D7  D5
+%                                                    D6
+%
+%<< circle >>
+%   \phcircle{D1,D2,D3,D4,D5,D6,D7,D8}      :           D2
+%                                                 D1          D3
+%
+%                                               D8              D4
+%
+%                                                 D7          D5
+%                                                       D6
+%
+%   \pscircle{D1,D2,D3,D4,D5,D6,D7,D8}      :        D2   D3
+%
+%                                               D1             D4
+%
+%                                               D8             D5
+%
+%                                                    D7    D6
+%
+%<< thar >>
+%   \phvthar{D1,D2,D3,D4,D5,D6,D7,D8}
+%   \phvThar{D1,D2,D3,D4,D5,D6,D7,D8}
+%   \pHvthar{D1,D2,D3,D4,D5,D6,D7,D8}
+%   \phVthar{D1,D2,D3,D4,D5,D6,D7,D8}
+%   \pHVthar{D1,D2,D3,D4,D5,D6,D7,D8}       :        D4
+%                                                    D3
+%                                               D1 D2  D6 D5
+%                                                    D7
+%                                                    D8
+%
+%   \plrthar{D1,D2,D3,D4,D5,D6,D7,D8}
+%   \plrThar{D1,D2,D3,D4,D5,D6,D7,D8}
+%   \pLRthar{D1,D2,D3,D4,D5,D6,D7,D8}       :     D1     D4
+%                                                   D2 D3
+%                                                   D7 D6
+%                                                 D8     D5
+%
+
+
+
+%<< crosswave >>
+%   \phcrosswave{D1,D2,D3,D4,D5,D6,D7,D8}   :        D5
+%                                                    D6
+%                                             D4   D3   D7   D8
+%                                                    D2
+%                                                    D1
+%
+%
+%   \pvcrosswave{D1,D2,D3,D4,D5,D6,D7,D8}   :        D4
+%
+%                                                    D3
+%                                               D1 D2 D6 D5
+%                                                    D7
+%
+%                                                    D8
+%
+%<< spindle >>
+%   \phspindle{D1,D2,D3,D4,D5,D6,D7,D8} :          D2 D3 D4
+%                                               D1          D5
+%                                                  D8 D7 D6
+%
+%   \pvspindle{D1,D2,D3,D4,D5,D6,D7,D8} :             D1
+%                                                  D8    D2
+%                                                  D7    D3
+%                                                  D6    D4
+%                                                     D5
+%
+%<< 3 x 1 diamond >>
+%   \phthreebyonedmd{D1,D2,D3,D4,D5,D6,D7,D8} :        D4
+%
+%                                               D1 D2 D3 D7 D6 D5
+%
+%                                                      D8
+%
+%   \pvthreebyonedmd{D1,D2,D3,D4,D5,D6,D7,D8} :       D1
+%                                                     D2
+%                                                     D3
+%                                                D8        D4
+%                                                     D7
+%                                                     D6
+%                                                     D5
+%
+%<< 3 x 1 triangles (external, use qtag for internal) >>
+%   \phthreebyonetgl{D1,D2,D3,D4,D5,D6,D7,D8} : D1       D2
+%                                               D3 D4 D8 D7
+%                                               D6       D5
+%
+%   \pvthreebyonetgl{D1,D2,D3,D4,D5,D6,D7,D8} : D6 D3 D1
+%                                                  D4
+%                                                  D8
+%                                               D5 D7 D2
+%
+% << point to point diamonds >>
+%   \phptpd{D1,D2,D3,D4,D5,D6,D7,D8} :
+%          D2           D6
+%      D1      D3   D5      D7 
+%          D4           D8 
+%   \pvptpd{D1,D2,D3,D4,D5,D6,D7,D8} :
+%          D1
+%        D4  D2
+%          D3
+%          D5
+%        D8  D6
+%          D7
+%
+% << "bone" or "I" setups >>
+%   \phbone{D1,D2,D3,D4,D5,D6,D7,D8}   :    D1             D7
+%                                              D3 D4 D5 D6
+%                                           D2             D8
+%
+%   \pvbone{D1,D2,D3,D4,D5,D6,D7,D8}   :       D2  D1
+%                                                D3
+%                                                D4
+%                                                D5
+%                                                D6
+%                                              D8  D7
+%------------------------------------------------------------------------------
+
+
+\newcount\@offX
+\newcount\@offY
+
+%-- 1 x 1 --%
+\def\phone{\@ifnextchar[{\@phone}{\@phone[0,0]}}
+\def\@phone[#1,#2]#3{\@@phone[#1,#2][#3]}
+\def\@@phone[#1,#2][#3]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 \cr
+    }%
+}
+
+%-- 1 x 2 --%
+\def\phtwo{\@ifnextchar[{\@phtwo}{\@phtwo[0,0]}}
+\def\@phtwo[#1,#2]#3{\@@phtwo[#1,#2][#3]}
+\def\@@phtwo[#1,#2][#3,#4]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 & \@dancer[0,0]#4 \cr
+    }%
+}
+
+%-- 2 x 1 --%
+\def\pvtwo{\@ifnextchar[{\@pvtwo}{\@pvtwo[0,0]}}
+\def\@pvtwo[#1,#2]#3{\@@pvtwo[#1,#2][#3]}
+\def\@@pvtwo[#1,#2][#3,#4]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 \cr
+        \@dancer[0,0]#4 \cr
+    }%
+}
+
+%-- 1 x 3 --%
+\def\phthree{\@ifnextchar[{\@phthree}{\@phthree[0,0]}}
+\def\@phthree[#1,#2]#3{\@@phthree[#1,#2][#3]}
+\def\@@phthree[#1,#2][#3,#4,#5]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 & \@dancer[0,0]#4 & \@dancer[0,0]#5 \cr
+    }%
+}
+
+%-- 3 x 1 --%
+\def\pvthree{\@ifnextchar[{\@pvthree}{\@pvthree[0,0]}}
+\def\@pvthree[#1,#2]#3{\@@pvthree[#1,#2][#3]}
+\def\@@pvthree[#1,#2][#3,#4,#5]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 \cr
+        \@dancer[0,0]#4 \cr
+        \@dancer[0,0]#5 \cr
+    }%
+}
+
+
+%-- triangle --%
+\def\pwtriangle{\@ifnextchar[{\@pwtriangle}{\@pwtriangle[0,0]}}
+\def\@pwtriangle[#1,#2]#3{\@@pwtriangle[#1,#2][#3]}
+\def\@@pwtriangle[#1,#2][#3,#4,#5]{%
+    \priform[#1,#2]
+    {
+                         & \@dancer[0,0]#4 \cr
+        \@dancer[0,50]#3 & \@dancer[0,0]#5 \cr
+    }%
+}
+
+\def\petriangle{\@ifnextchar[{\@petriangle}{\@petriangle[0,0]}}
+\def\@petriangle[#1,#2]#3{\@@petriangle[#1,#2][#3]}
+\def\@@petriangle[#1,#2][#3,#4,#5]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#5 &                  \cr
+        \@dancer[0,0]#4 & \@dancer[0,50]#3 \cr
+    }%
+}
+
+\def\pntriangle{\@ifnextchar[{\@pntriangle}{\@pntriangle[0,0]}}
+\def\@pntriangle[#1,#2]#3{\@@pntriangle[#1,#2][#3]}
+\def\@@pntriangle[#1,#2][#3,#4,#5]{%
+    \priform[#1,#2]
+    {
+        \@dancer[50,0]#3 &                 \cr
+        \@dancer[0,0]#5  & \@dancer[0,0]#4 \cr
+    }%
+}
+
+\def\pstriangle{\@ifnextchar[{\@pstriangle}{\@pstriangle[0,0]}}
+\def\@pstriangle[#1,#2]#3{\@@pstriangle[#1,#2][#3]}
+\def\@@pstriangle[#1,#2][#3,#4,#5]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#4  & \@dancer[0,0]#5 \cr
+        \@dancer[50,0]#3 &                 \cr
+    }%
+}
+
+%-- 1 x 4 --%
+\def\phfour{\@ifnextchar[{\@phfour}{\@phfour[0,0]}}
+\def\@phfour[#1,#2]#3{\@@phfour[#1,#2][#3]}
+\def\@@phfour[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 &\@dancer[0,0]#4 &\@dancer[0,0]#5 &\@dancer[0,0]#6 \cr
+    }%
+}
+
+%-- 4 x 1 --%
+\def\pvfour{\@ifnextchar[{\@pvfour}{\@pvfour[0,0]}}
+\def\@pvfour[#1,#2]#3{\@@pvfour[#1,#2][#3]}
+\def\@@pvfour[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 \cr
+        \@dancer[0,0]#4 \cr
+        \@dancer[0,0]#5 \cr
+        \@dancer[0,0]#6 \cr
+    }%
+}
+
+%-- 1 x 6 --%
+\def\phsix{\@ifnextchar[{\@phsix}{\@phsix[0,0]}}
+\def\@phsix[#1,#2]#3{\@@phsix[#1,#2][#3]}
+\def\@@phsix[#1,#2][#3,#4,#5,#6,#7,#8]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 &\@dancer[0,0]#4 &\@dancer[0,0]#5 &\@dancer[0,0]#6 &\@dancer[0,0]#7 &\@dancer[0,0]#8 \cr
+    }%
+}
+
+%-- 6 x 1 --%
+\def\pvsix{\@ifnextchar[{\@pvsix}{\@pvsix[0,0]}}
+\def\@pvsix[#1,#2]#3{\@@pvsix[#1,#2][#3]}
+\def\@@pvsix[#1,#2][#3,#4,#5,#6,#7,#8]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 \cr
+        \@dancer[0,0]#4 \cr
+        \@dancer[0,0]#5 \cr
+        \@dancer[0,0]#6 \cr
+        \@dancer[0,0]#7 \cr
+        \@dancer[0,0]#8 \cr
+    }%
+}
+
+%-- 1 x 8 --%
+\def\pheight{\@ifnextchar[{\@pheight}{\@pheight[0,0]}}
+\def\@pheight[#1,#2]#3{\@offX=#1\@offY=#2\@@pheight[#3]}
+\def\@@pheight[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+        \@dancer[0,0]#1 &\@dancer[0,0]#2 &\@dancer[0,0]#3 &\@dancer[0,0]#4 &\@dancer[0,0]#5 &\@dancer[0,0]#6 &\@dancer[0,0]#7 &\@dancer[0,0]#8 \cr
+    }%
+}
+
+%-- 8 x 1 --%
+\def\pveight{\@ifnextchar[{\@pveight}{\@pveight[0,0]}}
+\def\@pveight[#1,#2]#3{\@offX=#1\@offY=#2\@@pveight[#3]}
+\def\@@pveight[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+        \@dancer[0,0]#1 \cr
+        \@dancer[0,0]#2 \cr
+        \@dancer[0,0]#3 \cr
+        \@dancer[0,0]#4 \cr
+        \@dancer[0,0]#5 \cr
+        \@dancer[0,0]#6 \cr
+        \@dancer[0,0]#7 \cr
+        \@dancer[0,0]#8 \cr
+    }%
+}
+
+%-- 2 x 2 --%
+\def\phBB{\@ifnextchar[{\@phBB}{\@phBB[0,0]}}
+\def\@phBB[#1,#2]#3{\@@phBB[#1,#2][#3]}
+\def\@@phBB[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 & \@dancer[0,0]#5 \cr
+        \@dancer[0,0]#4 & \@dancer[0,0]#6 \cr
+    }%
+}
+
+
+\def\phDU{\@ifnextchar[{\@phDU}{\@phDU[0,0]}}
+\def\@phDU[#1,#2]#3{\@@phDU[#1,#2][#3]}
+\def\@@phDU[#1,#2][#3,#4]{%
+    \priform[#1,#2]
+    {
+                        & \@dancer[0,0]#4 \cr
+        \@dancer[0,0]#3 &                 \cr
+    }%
+}
+
+
+\def\phUD{\@ifnextchar[{\@phUD}{\@phUD[0,0]}}
+\def\@phUD[#1,#2]#3{\@@phUD[#1,#2][#3]}
+\def\@@phUD[#1,#2][#3,#4]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 &                 \cr
+                        & \@dancer[0,0]#4 \cr
+    }%
+}
+
+
+%-- diamond --%
+\def\phdiamond{\@ifnextchar[{\@phdiamond}{\@phdiamond[0,0]}}
+\def\@phdiamond[#1,#2]#3{\@@phdiamond[#1,#2][#3]}
+\def\@@phdiamond[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+                         & \@dancer[0,0]#4 &                  \cr
+        \@dancer[0,50]#3 & \@dancer[0,0]#6 & \@dancer[0,50]#5 \cr
+    }%
+}
+
+\def\pvdiamond{\@ifnextchar[{\@pvdiamond}{\@pvdiamond[0,0]}}
+\def\@pvdiamond[#1,#2]#3{\@@pvdiamond[#1,#2][#3]}
+\def\@@pvdiamond[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[50,0]#3 &                 \cr
+        \@dancer[0,0]#6  & \@dancer[0,0]#4 \cr
+        \@dancer[50,0]#5 &                 \cr
+    }%
+}
+
+%-- star --%
+%   2x2
+\def\pstar{\@ifnextchar[{\@pstar}{\@pstar[0,0]}}
+\def\@pstar[#1,#2]#3{\@@pstar[#1,#2][#3]}
+\def\@@pstar[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[50,0]#4 & \@dancer[0,-50]#5 \cr
+        \@dancer[0,50]#3 & \@dancer[-50,0]#6 \cr
+    }%
+}
+
+%   2.5x2.5
+\def\pStar{\@ifnextchar[{\@pStar}{\@pStar[0,0]}}
+\def\@pStar[#1,#2]#3{\@@pStar[#1,#2][#3]}
+\def\@@pStar[#1,#2][#3,#4,#5,#6]{{%
+    \e@border{-0.25}\w@border{-0.25}\n@border{-0.25}\s@border{-0.25}%
+    \priform[#1,#2]
+    {
+                         & \@dancer[0,-25]#4 &                   \cr
+        \@dancer[25,0]#3 &                   & \@dancer[-25,0]#5 \cr
+                         & \@dancer[0,25]#6  &                   \cr
+    }%
+}}
+
+%-- T --%
+\def\pstee{\@ifnextchar[{\@pstee}{\@pstee[0,0]}}
+\def\@pstee[#1,#2]#3{\@@pstee[#1,#2][#3]}
+\def\@@pstee[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3  & \@dancer[0,0]#4 \cr
+        \@dancer[50,0]#5 &                 \cr
+        \@dancer[50,0]#6 &                 \cr
+    }%
+}
+
+\def\pntee{\@ifnextchar[{\@pntee}{\@pntee[0,0]}}
+\def\@pntee[#1,#2]#3{\@@pntee[#1,#2][#3]}
+\def\@@pntee[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[50,0]#6 &                 \cr
+        \@dancer[50,0]#5 &                 \cr
+        \@dancer[0,0]#4  & \@dancer[0,0]#3 \cr
+    }%
+}
+
+\def\pwtee{\@ifnextchar[{\@pwtee}{\@pwtee[0,0]}}
+\def\@pwtee[#1,#2]#3{\@@pwtee[#1,#2][#3]}
+\def\@@pwtee[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,-50]#6 & \@dancer[0,-50]#5 & \@dancer[0,0]#3 \cr
+                          &                   & \@dancer[0,0]#4 \cr
+    }%
+}
+
+\def\petee{\@ifnextchar[{\@petee}{\@petee[0,0]}}
+\def\@petee[#1,#2]#3{\@@petee[#1,#2][#3]}
+\def\@@petee[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#4 & \@dancer[0,-50]#5 & \@dancer[0,-50]#6 \cr
+        \@dancer[0,0]#3 &                   &                   \cr
+    }%
+}
+
+%-- 2 x 3 --%
+\def\phBBB{\@ifnextchar[{\@phBBB}{\@phBBB[0,0]}}
+\def\@phBBB[#1,#2]#3{\@@phBBB[#1,#2][#3]}
+\def\@@phBBB[#1,#2][#3,#4,#5,#6,#7,#8]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 & \@dancer[0,0]#5 & \@dancer[0,0]#7 \cr
+        \@dancer[0,0]#4 & \@dancer[0,0]#6 & \@dancer[0,0]#8 \cr
+    }%
+}
+
+%-- 3 x 2 --%
+\def\pvBBB{\@ifnextchar[{\@pvBBB}{\@pvBBB[0,0]}}
+\def\@pvBBB[#1,#2]#3{\@@pvBBB[#1,#2][#3]}
+\def\@@pvBBB[#1,#2][#3,#4,#5,#6,#7,#8]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#4 & \@dancer[0,0]#3 \cr
+        \@dancer[0,0]#6 & \@dancer[0,0]#5 \cr
+        \@dancer[0,0]#8 & \@dancer[0,0]#7 \cr
+    }%
+}
+
+%-- 2 x 4 --%
+\def\phBBBB{\@ifnextchar[{\@phBBBB}{\@phBBBB[0,0]}}
+\def\@phBBBB[#1,#2]#3{\@offX=#1\@offY=#2\@@phBBBB[#3]}
+\def\@@phBBBB[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,0]#1 & \@dancer[0,0]#3 & \@dancer[0,0]#5 & \@dancer[0,0]#7 \cr
+    \@dancer[0,0]#2 & \@dancer[0,0]#4 & \@dancer[0,0]#6 & \@dancer[0,0]#8 \cr
+    }%
+}
+
+%-- 4 x 2 --%
+\def\pvBBBB{\@ifnextchar[{\@pvBBBB}{\@pvBBBB[0,0]}}
+\def\@pvBBBB[#1,#2]#3{\@offX=#1\@offY=#2\@@pvBBBB[#3]}
+\def\@@pvBBBB[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+        \@dancer[0,0]#2 & \@dancer[0,0]#1 \cr
+        \@dancer[0,0]#4 & \@dancer[0,0]#3 \cr
+        \@dancer[0,0]#6 & \@dancer[0,0]#5 \cr
+        \@dancer[0,0]#8 & \@dancer[0,0]#7 \cr
+    }%
+}
+
+%-- 4 x 4, restricted, people in northwest spots --%
+\def\pBBBBNW{\@ifnextchar[{\@pBBBBNW}{\@pBBBBNW[0,0]}}
+\def\@pBBBBNW[#1,#2]#3{\@offX=#1\@offY=#2\@@pBBBBNW[#3]}
+\def\@@pBBBBNW[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,0]#1  & \@dancer[0,0]... & \@dancer[0,0]#5  & \@dancer[0,0]... \cr
+    \@dancer[0,0]... & \@dancer[0,0]#3  & \@dancer[0,0]... & \@dancer[0,0]#7  \cr
+    \@dancer[0,0]#2  & \@dancer[0,0]... & \@dancer[0,0]#6  & \@dancer[0,0]... \cr
+    \@dancer[0,0]... & \@dancer[0,0]#4  & \@dancer[0,0]... & \@dancer[0,0]#8  \cr
+    }%
+}
+
+\def\pBBBBNWplus{\@ifnextchar[{\@pBBBBNWplus}{\@pBBBBNWplus[0,0]}}
+\def\@pBBBBNWplus[#1,#2]#3{\@offX=#1\@offY=#2\@@pBBBBNWplus[#3]}
+\def\@@pBBBBNWplus[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,0]#1  & \@dancer[0,0].+. & \@dancer[0,0]#5  & \@dancer[0,0].+. \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#3  & \@dancer[0,0].+. & \@dancer[0,0]#7  \cr
+    \@dancer[0,0]#2  & \@dancer[0,0].+. & \@dancer[0,0]#6  & \@dancer[0,0].+. \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#4  & \@dancer[0,0].+. & \@dancer[0,0]#8  \cr
+    }%
+}
+
+%-- 4 x 4, restricted, people in northeast spots --%
+\def\pBBBBNE{\@ifnextchar[{\@pBBBBNE}{\@pBBBBNE[0,0]}}
+\def\@pBBBBNE[#1,#2]#3{\@offX=#1\@offY=#2\@@pBBBBNE[#3]}
+\def\@@pBBBBNE[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,0]... & \@dancer[0,0]#3  & \@dancer[0,0]... & \@dancer[0,0]#7  \cr
+    \@dancer[0,0]#1  & \@dancer[0,0]... & \@dancer[0,0]#5  & \@dancer[0,0]... \cr
+    \@dancer[0,0]... & \@dancer[0,0]#4  & \@dancer[0,0]... & \@dancer[0,0]#8  \cr
+    \@dancer[0,0]#2  & \@dancer[0,0]... & \@dancer[0,0]#6  & \@dancer[0,0]... \cr
+    }%
+}
+
+%-- 4 x 4, restricted, people in northeast spots --%
+\def\pBBBBNEplus{\@ifnextchar[{\@pBBBBNEplus}{\@pBBBBNEplus[0,0]}}
+\def\@pBBBBNEplus[#1,#2]#3{\@offX=#1\@offY=#2\@@pBBBBNEplus[#3]}
+\def\@@pBBBBNEplus[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,0].+. & \@dancer[0,0]#3  & \@dancer[0,0].+. & \@dancer[0,0]#7  \cr
+    \@dancer[0,0]#1  & \@dancer[0,0].+. & \@dancer[0,0]#5  & \@dancer[0,0].+. \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#4  & \@dancer[0,0].+. & \@dancer[0,0]#8  \cr
+    \@dancer[0,0]#2  & \@dancer[0,0].+. & \@dancer[0,0]#6  & \@dancer[0,0].+. \cr
+    }%
+}
+
+%-- twin diamonds --%
+\def\phdiamonds{\@ifnextchar[{\@phdiamonds}{\@phdiamonds[0,0]}}
+\def\@phdiamonds[#1,#2]#3{\@offX=#1\@offY=#2\@@phdiamonds[#3]}
+\def\@@phdiamonds[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                      & \@dancer[-50,0]#7 &                  & \@dancer[-50,0]#1 \cr
+    \@dancer[0,-50]#6 & \@dancer[0,-50]#8 &                  &                   \cr
+                      &                   & \@dancer[0,50]#4 & \@dancer[0,50]#2  \cr
+    \@dancer[50,0]#5  &                   & \@dancer[50,0]#3 &                   \cr
+    }%
+}
+
+
+\def\pvdiamonds{\@ifnextchar[{\@pvdiamonds}{\@pvdiamonds[0,0]}}
+\def\@pvdiamonds[#1,#2]#3{\@offX=#1\@offY=#2\@@pvdiamonds[#3]}
+\def\@@pvdiamonds[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                     & \@dancer[50,0]#2  &                   & \@dancer[0,-50]#3 \cr
+    \@dancer[0,50]#1 &                   & \@dancer[-50,0]#4 &                   \cr
+                     & \@dancer[50,0]#8  &                   & \@dancer[0,-50]#5 \cr
+    \@dancer[0,50]#7 &                   & \@dancer[-50,0]#6 &                   \cr
+    }%
+}
+
+%-- hourglass --%
+\def\phhourglass{\@ifnextchar[{\@phhourglass}{\@phhourglass[0,0]}}
+\def\@phhourglass[#1,#2]#3{\@offX=#1\@offY=#2\@@phhourglass[#3]}
+\def\@@phhourglass[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                         & \@dancer[50,0]#2  & & \@dancer[0,-50]#3 \cr
+        \@dancer[0,50]#1 & & \@dancer[0,-50]#4 &                   \cr
+                         & \@dancer[0,50]#8  & & \@dancer[0,-50]#5 \cr
+        \@dancer[0,50]#7 & \@dancer[50,0]#6  & &                   \cr
+    }%
+}
+
+\def\pvhourglass{\@ifnextchar[{\@pvhourglass}{\@pvhourglass[0,0]}}
+\def\@pvhourglass[#1,#2]#3{\@offX=#1\@offY=#2\@@pvhourglass[#3]}
+\def\@@pvhourglass[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                & \@dancer[-50,0]#7  & \@dancer[50,0]#1 &                  \cr
+\@dancer[0,-50]#6 & \@dancer[50,0]#8 &                  &                  \cr
+                &                  & \@dancer[-50,0]#4  & \@dancer[0,50]#2 \cr
+                & \@dancer[-50,0]#5  & \@dancer[50,0]#3 &                  \cr
+    }%
+}
+
+%-- 1/4 tag --%
+\def\phqtag{\@ifnextchar[{\@phqtag}{\@phqtag[0,0]}}
+\def\@phqtag[#1,#2]#3{\@offX=#1\@offY=#2\@@phqtag[#3]}
+\def\@@phqtag[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                    & \@dancer[0,0]#1 & \@dancer[0,0]#2 &                 \cr
+    \@dancer[0,0]#3 & \@dancer[0,0]#4 & \@dancer[0,0]#5 & \@dancer[0,0]#6 \cr
+                    & \@dancer[0,0]#7 & \@dancer[0,0]#8 &                 \cr
+    }%
+}
+
+\def\pvqtag{\@ifnextchar[{\@pvqtag}{\@pvqtag[0,0]}}
+\def\@pvqtag[#1,#2]#3{\@offX=#1\@offY=#2\@@pvqtag[#3]}
+\def\@@pvqtag[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                    & \@dancer[0,0]#3 &                 \cr
+    \@dancer[0,0]#7 & \@dancer[0,0]#4 & \@dancer[0,0]#1 \cr
+    \@dancer[0,0]#8 & \@dancer[0,0]#5 & \@dancer[0,0]#2 \cr
+                    & \@dancer[0,0]#6 &                 \cr
+    }%
+}
+
+%-- rigger --%
+\def\phrigger{\@ifnextchar[{\@phrigger}{\@phrigger[0,0]}}
+\def\@phrigger[#1,#2]#3{\@offX=#1\@offY=#2\@@phrigger[#3]}
+\def\@@phrigger[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,-50]#3 & \@dancer[0,-50]#4 & \@dancer[0,0]#1 & \@dancer[0,0]#2 &                  &                  \cr
+                      &                   & \@dancer[0,0]#7 & \@dancer[0,0]#8 & \@dancer[0,50]#5 & \@dancer[0,50]#6 \cr
+    }%
+}
+
+\def\pvrigger{\@ifnextchar[{\@pvrigger}{\@pvrigger[0,0]}}
+\def\@pvrigger[#1,#2]#3{\@offX=#1\@offY=#2\@@pvrigger[#3]}
+\def\@@pvrigger[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                     & \@dancer[-50,0]#3 \cr
+                     & \@dancer[-50,0]#4 \cr
+    \@dancer[0,0]#7  & \@dancer[0,0]#1 \cr
+    \@dancer[0,0]#8  & \@dancer[0,0]#2 \cr
+    \@dancer[50,9]#5 &                 \cr
+    \@dancer[50,9]#6 &                 \cr
+    }%
+}
+
+%-- stars --%
+\def\phstar{\@ifnextchar[{\@phstar}{\@phstar[0,0]}}
+\def\@phstar[#1,#2]#3{\@offX=#1\@offY=#2\@@phstar[#3]}
+\def\@@phstar[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+        & \@dancer[25,-25]#7  &      &      & \@dancer[-25,-25]#1 &         \cr
+\@dancer[50,0]#6 && \@dancer[0,0]#8 & \@dancer[0,0]#4 && \@dancer[-50,0]#2 \cr
+        & \@dancer[25,25]#5 &      &      & \@dancer[-25,25]#3  &         \cr
+    }%
+}
+
+\def\pvstar{\@ifnextchar[{\@pvstar}{\@pvstar[0,0]}}
+\def\@pvstar[#1,#2]#3{\@offX=#1\@offY=#2\@@pvstar[#3]}
+\def\@@pvstar[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                           & \@dancer[0,-50]#2 &                     \cr
+        \@dancer[25,-25]#1 &                   & \@dancer[-25,-25]#3 \cr
+                           & \@dancer[0,0]#4   &                     \cr
+                           & \@dancer[0,0]#8   &                     \cr
+        \@dancer[25,25]#7  &                   & \@dancer[-25,25]#5  \cr
+                           & \@dancer[0,50]#6  &                     \cr
+    }%
+}
+
+%-- galaxy --%
+\def\phgalaxy{\@ifnextchar[{\@phgalaxy}{\@phgalaxy[0,0]}}
+\def\@phgalaxy[#1,#2]#3{\@offX=#1\@offY=#2\@@phgalaxy[#3]}
+\def\@@phgalaxy[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                  &        \@dancer[50,0]#2   &       &                  \cr
+\@dancer[0,-50]#8 & \@dancer[0,0]#1 & \@dancer[0,0]#3 &                  \cr
+                  & \@dancer[0,0]#7 & \@dancer[0,0]#5 & \@dancer[0,50]#4 \cr
+                  &        \@dancer[50,0]#6   &       &                  \cr
+    }%
+}
+
+%-- circle --%
+\def\phcircle{\@ifnextchar[{\@phcircle}{\@phcircle[0,0]}}
+\def\@phcircle[#1,#2]#3{\@offX=#1\@offY=#2\@@phcircle[#3]}
+\def\@@phcircle[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                  &         \@dancer[50,0]#2   &           &                \cr
+\@dancer[0,-50]#8 & \@dancer[-56,56]#1 & \@dancer[56,56]#3 &                \cr
+              & \@dancer[-56,-56]#7 & \@dancer[56,-56]#5 & \@dancer[0,50]#4 \cr
+              &             & \@dancer[-50,0]#6          &                  \cr
+    }%
+}
+
+\def\pscircle{\@ifnextchar[{\@pscircle}{\@pscircle[0,0]}}
+\def\@pscircle[#1,#2]#3{\@offX=#1\@offY=#2\@@pscircle[#3]}
+\def\@@pscircle[#1,#2,#3,#4,#5,#6,#7,#8]{{%
+    \e@border{-0.11}\w@border{-0.11}\n@border{-0.11}\s@border{-0.11}%
+    \priform[\the\@offX,\the\@offY]
+    {
+                & \@dancer[-7,-11]#2 & \@dancer[7,-11]#3 &                  \cr
+\@dancer[11,7]#1  &                  &                 & \@dancer[-11,7]#4  \cr
+\@dancer[11,-7]#8 &                  &                 & \@dancer[-11,-7]#5 \cr
+                & \@dancer[-7,11]#7  & \@dancer[7,11]#6  &                  \cr
+    }%
+}}
+
+%-- thar --%
+%   4x4
+\def\phvthar{\@ifnextchar[{\@phvthar}{\@phvthar[0,0]}}
+\def\@phvthar[#1,#2]#3{\@offX=#1\@offY=#2\@@phvthar[#3]}
+\def\@@phvthar[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                 & \@dancer[50,0]#4 &                   &                   \cr
+                 & \@dancer[50,0]#3 & \@dancer[0,-50]#6 & \@dancer[0,-50]#5 \cr
+\@dancer[0,50]#1 & \@dancer[0,50]#2 & \@dancer[-50,0]#7 &                   \cr
+                 &                  & \@dancer[-50,0]#8 &                   \cr
+    }%
+}
+
+\def\plrthar{\@ifnextchar[{\@plrthar}{\@plrthar[0,0]}}
+\def\@plrthar[#1,#2]#3{\@offX=#1\@offY=#2\@@plrthar[#3]}
+\def\@@plrthar[#1,#2,#3,#4,#5,#6,#7,#8]{{%
+    \e@border{-0.42}\w@border{-0.42}\n@border{-0.42}\s@border{-0.42}%
+    \priform[\the\@offX,\the\@offY]
+    {
+        \@dancer[42,-42]#1 &         &         & \@dancer[-42,-42]#4 \cr
+                & \@dancer[14,-14]#2 & \@dancer[-14,-14]#3 &         \cr
+                & \@dancer[14,14]#7  & \@dancer[-14,14]#6  &         \cr
+        \@dancer[42,42]#8  &         &         & \@dancer[-42,42]#5  \cr
+    }%
+}}
+
+%   4.5x4.5
+\def\phvThar{\@ifnextchar[{\@phvThar}{\@phvThar[0,0]}}
+\def\@phvThar[#1,#2]#3{\@offX=#1\@offY=#2\@@phvThar[#3]}
+\def\@@phvThar[#1,#2,#3,#4,#5,#6,#7,#8]{{%
+    \e@border{-0.25}\w@border{-0.25}\n@border{-0.25}\s@border{-0.25}%
+    \priform[\the\@offX,\the\@offY]
+    {
+                &         & \@dancer[0,-25]#4 &         &                   \cr
+                &         & \@dancer[0,-25]#3 &         &                   \cr
+\@dancer[25,0]#1& \@dancer[25,0]#2 & & \@dancer[-25,0]#6& \@dancer[-25,0]#5 \cr
+                &         & \@dancer[0,25]#7  &         &                   \cr
+                &         & \@dancer[0,25]#8  &         &                   \cr
+    }%
+}}
+
+\def\plrThar{\@ifnextchar[{\@plrThar}{\@plrThar[0,0]}}
+\def\@plrThar[#1,#2]#3{\@offX=#1\@offY=#2\@@plrThar[#3]}
+\def\@@plrThar[#1,#2,#3,#4,#5,#6,#7,#8]{{%
+    \e@border{-0.26}\w@border{-0.26}\n@border{-0.26}\s@border{-0.26}%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[26,-26]#1 &         &         & \@dancer[-26,-26]#4 \cr
+             & \@dancer[-3,3]#2  & \@dancer[3,3]#3  &            \cr
+             & \@dancer[-3,-3]#7 & \@dancer[3,-3]#6 &            \cr
+    \@dancer[26,26]#8  &         &         & \@dancer[-26,26]#5  \cr
+    }%
+}}
+
+%   5x5
+\def\pHVthar{\@ifnextchar[{\@pHVthar}{\@pHVthar[0,0]}}
+\def\@pHVthar[#1,#2]#3{\@offX=#1\@offY=#2\@@pHVthar[#3]}
+\def\@@pHVthar[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                &         & \@dancer[0,0]#4 &         &                 \cr
+                &         & \@dancer[0,0]#3 &         &                 \cr
+\@dancer[0,0]#1 & \@dancer[0,0]#2 & & \@dancer[0,0]#6 & \@dancer[0,0]#5 \cr
+                &         & \@dancer[0,0]#7 &         &                 \cr
+                &         & \@dancer[0,0]#8 &         &                 \cr
+    }%
+}
+
+\def\pLRthar{\@ifnextchar[{\@pLRthar}{\@pLRthar[0,0]}}
+\def\@pLRthar[#1,#2]#3{\@offX=#1\@offY=#2\@@pLRthar[#3]}
+\def\@@pLRthar[#1,#2,#3,#4,#5,#6,#7,#8]{{%
+    \e@border{-0.08}\w@border{-0.08}\n@border{-0.08}\s@border{-0.08}%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[8,-8]#1  &           &          & \@dancer[-8,-8]#4 \cr
+            & \@dancer[-21,21]#2  & \@dancer[21,21]#3  &         \cr
+            & \@dancer[-21,-21]#7 & \@dancer[21,-21]#6 &         \cr
+    \@dancer[8,8]#8   &           &          & \@dancer[-8,8]#5  \cr
+    }%
+}}
+
+%   4x5
+\def\phVthar{\@ifnextchar[{\@phVthar}{\@phVthar[0,0]}}
+\def\@phVthar[#1,#2]#3{\@offX=#1\@offY=#2\@@phVthar[#3]}
+\def\@@phVthar[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                    &         \@dancer[50,0]#4 &        &                 \cr
+                    &         \@dancer[50,0]#3 &        &                 \cr
+    \@dancer[0,0]#1 & \@dancer[0,0]#2 & \@dancer[0,0]#6 & \@dancer[0,0]#5 \cr
+                    &         \@dancer[50,0]#7 &        &                 \cr
+                    &         \@dancer[50,0]#8 &        &                 \cr
+    }%
+}
+
+%   5x4
+\def\pHvthar{\@ifnextchar[{\@pHvthar}{\@pHvthar[0,0]}}
+\def\@pHvthar[#1,#2]#3{\@offX=#1\@offY=#2\@@pHvthar[#3]}
+\def\@@pHvthar[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+               & & \@dancer[0,0]#4  &                   &                   \cr
+               & & \@dancer[0,0]#3  & \@dancer[0,-50]#6 & \@dancer[0,-50]#5 \cr
+\@dancer[0,50]#1 & \@dancer[0,50]#2 & \@dancer[0,0]#7 & &                   \cr
+               &                    & \@dancer[0,0]#8 & &                   \cr
+    }%
+}
+
+%   crosswave
+
+\def\phcrosswave{\@ifnextchar[{\@phcrosswave}{\@phcrosswave[0,0]}}
+\def\@phcrosswave[#1,#2]#3{\@offX=#1\@offY=#2\@@phcrosswave[#3]}
+\def\@@phcrosswave[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                     &                  & \@dancer[50,0]#5 &                   &                   &                  \cr
+                     &                  & \@dancer[50,0]#6 &                   & \@dancer[0,-50]#7 & \@dancer[0,-50]#8 \cr
+    \@dancer[0,50]#4 & \@dancer[0,50]#3 &                  & \@dancer[-50,0]#2 &                   &                   \cr
+                     &                  &                  & \@dancer[-50,0]#1 &                   &                   \cr
+    }%
+}
+
+\def\pvcrosswave{\@ifnextchar[{\@pvcrosswave}{\@pvcrosswave[0,0]}}
+\def\@pvcrosswave[#1,#2]#3{\@offX=#1\@offY=#2\@@pvcrosswave[#3]}
+\def\@@pvcrosswave[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                     & \@dancer[50,0]#4 &                   &                   \cr
+                     & \@dancer[50,0]#3 &                   &                   \cr
+                     &                  & \@dancer[0,-50]#6 & \@dancer[0,-50]#5 \cr
+    \@dancer[0,50]#1 & \@dancer[0,50]#2 &                   &                   \cr
+                     &                  & \@dancer[-50,0]#7 &                   \cr
+                     &                  & \@dancer[-50,0]#8 &                   \cr
+    }%
+}
+
+%-- spindle --%
+\def\phspindle{\@ifnextchar[{\@phspindle}{\@phspindle[0,0]}}
+\def\@phspindle[#1,#2]#3{\@offX=#1\@offY=#2\@@phspindle[#3]}
+\def\@@phspindle[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+\@dancer[0,-50]#1 & \@dancer[0,0]#2 & \@dancer[0,0]#3 & \@dancer[0,0]#4  & \cr
+  & \@dancer[0,0]#8 & \@dancer[0,0]#7 & \@dancer[0,0]#6 & \@dancer[0,50]#5 \cr
+    }%
+}
+
+\def\pvspindle{\@ifnextchar[{\@pvspindle}{\@pvspindle[0,0]}}
+\def\@pvspindle[#1,#2]#3{\@offX=#1\@offY=#2\@@pvspindle[#3]}
+\def\@@pvspindle[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                     & \@dancer[-50,0]#1 \cr
+    \@dancer[0,0]#8  & \@dancer[0,0]#2   \cr
+    \@dancer[0,0]#7  & \@dancer[0,0]#3   \cr
+    \@dancer[0,0]#6  & \@dancer[0,0]#4   \cr
+    \@dancer[50,0]#5 &                   \cr
+    }%
+}
+
+% 3 x 1 diamond
+\def\phthreebyonedmd{\@ifnextchar[{\@phthreebyonedmd}{\@phthreebyonedmd[0,0]}}
+\def\@phthreebyonedmd[#1,#2]#3{\@offX=#1\@offY=#2\@@phthreebyonedmd[#3]}
+\def\@@phthreebyonedmd[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                    &                 & \@dancer[50,0]#4 &                &                 & \cr
+    \@dancer[0,0]#1 & \@dancer[0,0]#2 & \@dancer[0,0]#3 & \@dancer[0,0]#7 & \@dancer[0,0]#6 & \@dancer[0,0]#5 \cr
+                    &                 &                 & \@dancer[-50,0]#8 &               & \cr
+    }%
+}
+
+\def\pvthreebyonedmd{\@ifnextchar[{\@pvthreebyonedmd}{\@pvthreebyonedmd[0,0]}}
+\def\@pvthreebyonedmd[#1,#2]#3{\@offX=#1\@offY=#2\@@pvthreebyonedmd[#3]}
+\def\@@pvthreebyonedmd[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                     & \@dancer[0,0]#1 & \cr
+                     & \@dancer[0,0]#2 & \cr
+                     & \@dancer[0,0]#3 & \@dancer[0,-50]#4 \cr
+    \@dancer[0,50]#8 & \@dancer[0,0]#7 & \cr
+                     & \@dancer[0,0]#6 & \cr
+                     & \@dancer[0,0]#5 & \cr
+    }%
+}
+
+% 3 x 1 triangle
+\def\phthreebyonetgl{\@ifnextchar[{\@phthreebyonetgl}{\@phthreebyonetgl[0,0]}}
+\def\@phthreebyonetgl[#1,#2]#3{\@offX=#1\@offY=#2\@@phthreebyonetgl[#3]}
+\def\@@phthreebyonetgl[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,0]#1 &                 &                 & \@dancer[0,0]#2 \cr
+    \@dancer[0,0]#3 & \@dancer[0,0]#4 & \@dancer[0,0]#8 & \@dancer[0,0]#7 \cr
+    \@dancer[0,0]#6 &                 &                 & \@dancer[0,0]#5 \cr
+    }%
+}
+
+\def\pvthreebyonetgl{\@ifnextchar[{\@pvthreebyonetgl}{\@pvthreebyonetgl[0,0]}}
+\def\@pvthreebyonetgl[#1,#2]#3{\@offX=#1\@offY=#2\@@pvthreebyonetgl[#3]}
+\def\@@pvthreebyonetgl[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,0]#6 & \@dancer[0,0]#3 & \@dancer[0,0]#1 \cr
+                    & \@dancer[0,0]#4 &                 \cr
+                    & \@dancer[0,0]#8 &                 \cr
+    \@dancer[0,0]#5 & \@dancer[0,0]#7 & \@dancer[0,0]#2 \cr
+    }%
+}
+
+\def\phptpd{\@ifnextchar[{\@phptpd}{\@phptpd[0,0]}}
+\def\@phptpd[#1,#2]#3{\@offX=#1\@offY=#2\@@phptpd[#3]}
+\def\@@phptpd[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+                     & \@dancer[0,0]#2 &                  &                  & \@dancer[0,0]#6 &                  \cr
+    \@dancer[0,50]#1 & \@dancer[0,0]#4 & \@dancer[0,50]#3 & \@dancer[0,50]#5 & \@dancer[0,0]#8 & \@dancer[0,50]#7 \cr
+    }%
+}
+
+\def\pvptpd{\@ifnextchar[{\@pvptpd}{\@pvptpd[0,0]}}
+\def\@pvptpd[#1,#2]#3{\@offX=#1\@offY=#2\@@pvptpd[#3]}
+\def\@@pvptpd[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+        \@dancer[50,0]#1 &                 \cr
+        \@dancer[0,0]#4  & \@dancer[0,0]#2 \cr
+        \@dancer[50,0]#3 &                 \cr
+        \@dancer[50,0]#5 &                 \cr
+        \@dancer[0,0]#8  & \@dancer[0,0]#6 \cr
+        \@dancer[50,0]#7 &                 \cr
+    }%
+}
+
+\def\phbone{\@ifnextchar[{\@phbone}{\@phbone[0,0]}}
+\def\@phbone[#1,#2]#3{\@offX=#1\@offY=#2\@@phbone[#3]}
+\def\@@phbone[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,0]#1 &                  &                  &                  &                  & \@dancer[0,0]#7 \cr
+    \@dancer[0,0]#2 & \@dancer[0,50]#3 & \@dancer[0,50]#4 & \@dancer[0,50]#5 & \@dancer[0,50]#6 & \@dancer[0,0]#8 \cr
+    }%
+}
+
+\def\pvbone{\@ifnextchar[{\@pvbone}{\@pvbone[0,0]}}
+\def\@pvbone[#1,#2]#3{\@offX=#1\@offY=#2\@@pvbone[#3]}
+\def\@@pvbone[#1,#2,#3,#4,#5,#6,#7,#8]{%
+    \priform[\the\@offX,\the\@offY]
+    {
+    \@dancer[0,0]#2 & \@dancer[0,0]#1 \cr
+    \@dancer[50,0]#3 \cr
+    \@dancer[50,0]#4 \cr
+    \@dancer[50,0]#5 \cr
+    \@dancer[50,0]#6 \cr
+    \@dancer[0,0]#8 & \@dancer[0,0]#7 \cr
+    }%
+}
+
+%-- testing new bent 1x4 --%
+\def\pbentfour{\@ifnextchar[{\@pbentfour}{\@pbentfour[0,0]}}
+\def\@pbentfour[#1,#2]#3{\@@pbentfour[#1,#2][#3]}
+\def\@@pbentfour[#1,#2][#3,#4,#5,#6]{%
+    \priform[#1,#2]
+    {
+        \@dancer[0,0]#3 &\@dancer[0,0]#4 \cr
+                        &                &\@dancer[0,0]#5 \cr
+                        &                &\@dancer[0,0]#6 \cr
+    }%
+}
+
+%------------------------------------------------------------------------------

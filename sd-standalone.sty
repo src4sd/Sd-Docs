@@ -1,0 +1,46 @@
+%------------------------------------------------------------------------------
+%   sd-standalone.sty    by Guy Steele, 2018
+%
+
+% Sue Nov 2021: Guy says delete this line or download tex-squares_209.sty
+% \RequirePackage{tex-squares}
+\RequirePackage{sd}
+\RequirePackage{sd-pf}
+\RequirePackage{sd-sf}
+\RequirePackage{sd-sf12}
+\Largedancer
+%\NORMALdancer
+
+\newdimen\displaydancewidth   \displaydancewidth=6.75in
+
+% Redefine the displaydance environment to work properly in a standalone diagram
+
+% Cut vertical spacing by half.
+\def\displaydance{\@ifnextchar[{\@displaydance}%
+   {\@displaydance[\displaymodehskip,0.5\displaymodevskip]}%
+}
+
+\def\@displaydance[#1,#2]{\vbox\bgroup
+    \formationmag{\the\displaymodemag}
+    \offinterlineskip
+    \tabskip=#1
+    \@dispvskip=#2
+    \def\\{\crcr\egroup\egroup\vskip\@dispvskip\filbreak\vbox\bgroup
+        \halign to\displaydancewidth\bgroup &\hfil####\unskip\hfil\crcr
+    }
+    \def\cr{\crcr\noalign{\vskip\@dispvskip}}
+    \def\lcaption##1{\crcr
+        \noalign{\hbox to \displaydancewidth{##1\hfil}\vskip\@dispvskip}
+    }
+    \def\ccaption##1{\crcr
+        \noalign{\hbox to \displaydancewidth{\hfil##1\hfil}\vskip\@dispvskip}
+    }
+ %   \par
+    \vskip\@dispvskip
+    \vbox\bgroup
+        \halign to\displaydancewidth\bgroup &\hfil##\unskip\hfil\crcr
+}
+\def\enddisplaydance{\unskip\crcr\egroup\egroup\vskip\@dispvskip
+%   \hrule%
+\egroup
+}

@@ -1,0 +1,2221 @@
+%------------------------------------------------------------------------------
+%   sd-sf.sty   Copyright (C) Atsushi Takeuchi, 1992,1993,1994
+%
+%       v1.00   1992/10/18  by Atsushi Takeuchi
+%       v1.01   1992/12/04
+%                   change \formation to \sdform and bugfix
+%                   add \shcircle
+%       v1.02   1993/01/28
+%                   bug fix
+%       v1.03   1993/04/29
+%                   change diamond macros from 4x2 matrix to 3x2 matrix
+%                   change star macro from 3x3 to 2x2
+%                   change thar macros from 5x5 to 4x4
+%                   add another thar macros
+%       v1.04   1993/08/10
+%                   add \shvThar \slrThar (4.5x4.5 thar)
+%                   add \syStars \sxStars \slStars \srStars (2.5x2.5 star)
+%                   add \shspindle \svspindle
+%                   add \syhtridiamonds \sxvtridiamonds
+%                   add \syvtridiamonds \sxhtridiamonds
+%       v1.05   1994/03/10
+%                   add \sscircle
+%       v1.06   1994/05/26
+%                   change symmetric functions in order to draw symmetric arrow
+%                       and optional overlapped contents of dancer macro
+%                   append border width to some macros
+%       v1.07   1994/07/23
+%                   bug fix
+%       v1.08   2004/02/16 Bill Ackerman
+%                   Add 3x1 diamonds, and restricted 3x6 and 4x6 setups.
+%                   These are restricted because I don't know how to pass more
+%                   than 8 arguments.  Does anyone know how to fix this?
+%       v1.09   2004/08/15 Bill Ackerman
+%                   Create another file, "sd-sf12.sty", containing versions
+%                   of the macros for 12-person symmetric formations.
+%                   Couples are numbered 1 to 6.  Macro names are same as in
+%                   this file but with "twl" (for "twelve") appended to the
+%                   name.  Only setups of at least 12 persons are supported.
+%       v1.10   2004/11/14 Bill Ackerman
+%                   Add bigdiamonds.
+%       v1.11   2004/11/25 Bill Ackerman
+%                   Add 1x16, 16x1.
+%       v1.12   2011/04/16 Bill Ackerman
+%                   Add shthreebyonestar, svthreebyonestar
+%       v1.13   2014/04/04 Bill Ackerman
+%                   Add shcrosswave, svcrosswave
+%
+%   This file contains symmetric formation macros.
+%   Use this style file with sd.sty.  For example:
+%
+%       \documentclass[12pt]{article}
+%       \usepackage{tex-squares}
+%       \usepackage{sd}
+%       \usepackage{sd-pf}
+%       \usepackage{sd-sf}
+%       \usepackage{sd-sf12}
+%
+%----------------------------- MACRO LIST -------------------------------------
+%
+%<< general syntax >>
+%
+%   \XXXXX[HMAG,VMAG]{D1,D2,...,Dn}
+%
+%       XXXX: macro name of symmetric formation. it begins with s.
+%       HMAG: horizontal local magnification ratio of the formation.
+%       VMAG: vertical   local magnification ratio of the formation.
+%           : [HMAG,VMAG] is optional, default is [1,1]
+%
+%       Dn  : string of 3 characters.
+%           : 1st character means dancer frame.
+%           :   b is box, g is circle, p is dashed box, "." is no frame.
+%           : 2nd character means character in the frame.
+%           :   only 1 2 3 4 is available for symmetric mode.
+%           :   other character is output as it is, but "." means no character.
+%           : 3rd character means direction of dancer.
+%           :   .(none) n(north) s(south) e(east) w(west)
+%           :   1(north-east) 2(north-west) 3(south-west) 4(south-west)
+%           :   v(n and s) h(e and w) r(1 and 3) l(2 and 4)
+%           :   +(n and s and e and w) x(1 and 2 and 3 and 4)
+%           : D1,...,Dn is only 1/2 of the dancers constructing the formation.
+%           :   another dancers (Sn,...S1) are placed symmetrically.
+%
+%       ex. :   \syhlines{g1n,b1s,b4n,g4s}
+%                   is right hand waves for grand right and left.
+%
+%<< 8 x 1 >>
+%   \syvlines{D1,D2,D3,D4}  :   D1
+%                               D2
+%                               D3
+%                               D4
+%                               S4
+%                               S3
+%                               S2
+%                               S1
+%
+%<< 1 x 8 >>
+%   \sxhlines{D1,D2,D3,D4}  :   S1 S2 S3 S4 D4 D3 D2 D1
+%
+%<< 2 x 4 >>
+%   \syhlines{D1,D2,D3,D4}  :   D1 D2 D3 D4
+%                               S4 S3 S2 S1
+%
+%<< 4 x 2 >>
+%   \sxvlines{D1,D2,D3,D4}  :   S4 D1
+%                               S3 D2
+%                               S2 D3
+%                               S1 D4
+%
+%<< twin diamonds >>
+%   \syhdiamonds{D1,D2,D3,D4}:       D2
+%                               D1        D3
+%                                    D4
+%                                    S4
+%                               S3        S1
+%                                    S2
+%
+%   \sxvdiamonds{D1,D2,D3,D4}:    S3     D1
+%
+%                               S2  S4 D4  D2
+%
+%                                 S1     D3
+%
+%<< big diamonds >>
+%   \syhbigdiamonds{D1,D2,D3,D4,D5,D6}:
+%                                    D3
+%                           D1  D2        D5  D4
+%                                    D6
+%                                    S6
+%                           S4  S5        S2  S1
+%                                    S3
+%
+%   \sxvbigdiamonds{D1,D2,D3,D4,D5,D6}:
+%                                 S4     D1
+%
+%                                 S5     D2
+%
+%                               S3  S6 D6  D3
+%
+%                                 S2     D5
+%
+%                                 S1     D4
+%
+%<< point to point diamonds >>
+%   \syvdiamonds{D1,D2,D3,D4}:    D1
+%
+%                               D4  D2
+%
+%                                 D3
+%                                 S3
+%
+%                               S2  S4
+%
+%                                 S1
+%
+%   \sxhdiamonds{D1,D2,D3,D4}:       S2           D4
+%                               S1        S3 D3        D1
+%                                    S4           D2
+%
+%<< 3 x 1 diamonds >>
+%   \shthreebyonedmd{D1,D2,D3,D4}:         S4
+%
+%                                S1  S2  S3  D3  D2  D1
+%
+%                                          D4
+%
+%   \svthreebyonedmd{D1,D2,D3,D4}:     D1
+%
+%                                      D2
+%
+%                                      D3
+%                                 S4        D4
+%                                      S3
+%
+%                                      S2
+%
+%                                      S1
+%
+%<< crosswave >>
+%   \shcrosswave{D1,D2,D3,D4}:     D1
+%
+%                                  D2
+%                        S3  S4          D4  D3
+%                                  S2
+%
+%                                  S1
+%
+%
+%   \svcrosswave{D1,D2,D3,D4}:     S3
+%
+%                                  S4
+
+%                            S1  S2  D2  D1
+%
+%                                  D4
+%
+%                                  D3
+%
+%<< 3 x 1 stars, that is, center star is isotropic >>
+%   \shthreebyonestar{D1,D2,D3,D4}:
+%                                          S4
+%                                S1  S2  S3  D3  D2  D1
+%                                          D4
+%
+%   \svthreebyonestar{D1,D2,D3,D4}:
+%                                      D1
+%
+%                                      D2
+%
+%                                      D3
+%                                    S4  D4
+%                                      S3
+%
+%                                      S2
+%
+%                                      S1
+%
+%<< 1 x 3 diamonds >>
+%   \shonebythreedmd{D1,D2,D3,D4}:         S4
+%                              S1  S2  S3      D3  D2  D1
+%                                          D4
+%
+%   \svonebythreedmd{D1,D2,D3,D4}:     D1
+%
+%                                      D2
+%
+%                                      D3
+%
+%                                    S4  D4
+%
+%                                      S3
+%
+%                                      S2
+%
+%                                      S1
+%<< 4 x 3 >>
+%   \syhBBBs{D1,D2,D3,D4,D5,D6} :   D1 D3 D5
+%                                   D2 D4 D6
+%                                   S6 S4 S2
+%                                   S5 S3 S1
+%
+%   \syhDBDs{D1,D2,D3,D4}       :      D2
+%                                   D1 D3 D4
+%                                   S4 S3 S1
+%                                      S2
+%
+%<< 3 x 4 >>
+%   \sxvBBBs{D1,D2,D3,D4,D5,D6} :   S5 S6 D2 D1
+%                                   S3 S4 D4 D3
+%                                   S1 S2 D6 D5
+%
+%   \sxvLBLs{D1,D2,D3,D4}       :      S4 D1
+%                                   S2 S3 D3 D2
+%                                      S1 D4
+%
+%<< 6 x 2 >>
+%   \syvBBBs{D1,D2,D3,D4,D5,D6} :   D2 D1
+%                                   D4 D3
+%                                   D6 D5
+%                                   S5 S6
+%                                   S3 S4
+%                                   S1 S2
+%
+%<< 2 x 6 >>
+%   \sxhBBBs{D1,D2,D3,D4,D5,D6} :   S1 S3 S5 D6 D4 D2
+%                                   S2 S4 S6 D5 D3 D1
+%
+%<< 7 x 2 >>
+%   \syvBBVs{D1,D2,D3,D4,D5,D6,D7} :D2 D1
+%                                   D4 D3
+%                                   D6 D5
+%                                   S7 D7
+%                                   S5 S6
+%                                   S3 S4
+%                                   S1 S2
+%
+%<< 2 x 5 >>
+%   \sxhBBFs{D1,D2,D3,D4,D5} :    S1 S3 S5 D4 D2
+%                                 S2 S4 D5 D3 D1
+%
+%<< 2 x 7 >>
+%   \sxhBBVs{D1,D2,D3,D4,D5,D6,D7} :S1 S3 S5 S7 D6 D4 D2
+%                                   S2 S4 S6 D7 D5 D3 D1
+%
+%<< 12 x 1 >>
+%   \syvLLLs{D1,D2,D3,D4,D5,D6} : D1
+%                                 D2
+%                                 D3
+%                                 D4
+%                                 D5
+%                                 D6
+%                                 S6
+%                                 S5
+%                                 S4
+%                                 S3
+%                                 S2
+%                                 S1
+%
+%<< 16 x 1 >>
+%   \syvEEEEs{D1,D2,D3,D4,D5,D6,D7,D8}: D1
+%                                       D2
+%                                       D3
+%                                       D4
+%                                       D5
+%                                       D6
+%                                       D7
+%                                       D8
+%                                       S8
+%                                       S7
+%                                       S6
+%                                       S5
+%                                       S4
+%                                       S3
+%                                       S2
+%                                       S1
+%
+%<< 1 x 12 >>
+%   \sxhLLLs{D1,D2,D3,D4,D5,D6}  :   S1 S2 S3 S4 S5 S6 D6 D5 D4 D3 D2 D1
+%
+%<< 1 x 16 >>
+%   \sxhEEEEs{D1,D2,D3,D4,D5,D6,D7,D8} :
+%                      S1 S2 S3 S4 S5 S6 S7 S8 D8 D7 D6 D5 D4 D3 D2 D1
+%
+%<< 4 x 4 >>
+%   \syhBBBBs{D1,D2,D3,D4,D5,D6,D7,D8}  :   D1 D3 D5 D7
+%                                           D2 D4 D6 D8
+%                                           S8 S6 S4 S2
+%                                           S7 S5 S3 S1
+%
+%<< 6 x 4 (restricted) >>
+%   \syhCCCCs{D1,D2,D3,D4,D5,D6,D7,D8}  :   D1 D3 D5 D7
+%                                            .  .  .  .
+%                                           D2 D4 D6 D8
+%                                           S8 S6 S4 S2
+%                                            .  .  .  .
+%                                           S7 S5 S3 S1
+%  You should use '...' for other phantoms.
+%
+%  syhCCCCsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 6 x 4 (another restricted one) >>
+%   \syhJJJJs{D1,D2,D3,D4,D5,D6,D7,D8}  :   D1 D5  .  .
+%                                           D2 D6  .  .
+%                                           D3 D7 S8 S4
+%                                           D4 D8 S7 S3
+%                                            .  . S6 S2
+%                                            .  . S5 S1
+%  You should use '...' for other phantoms.
+%
+%  syhJJJJsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 6 x 4 (another restricted one) >>
+%   \syhKKKKs{D1,D2,D3,D4,D5,D6,D7,D8}  :    .  . D1 D5
+%                                            .  . D2 D6
+%                                           S8 S4 D3 D7
+%                                           S7 S3 D4 D8
+%                                           S6 S2  .  .
+%                                           S5 S1  .  .
+%  You should use '...' for other phantoms.
+%
+%  syhKKKKsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 6 x 4 (another restricted one) >>
+%   \syhNNNNs{D1,D2,D3,D4,D5,D6,D7,D8}  :    . D2 D5  .
+%                                           D1 D3 D6 D8
+%                                            . D4 D7  .
+%                                            . S7 S4  .
+%                                           S8 S6 S3 S1
+%                                            . S5 S2  .
+%  You should use '...' for other phantoms.
+%
+%  syhNNNNsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 4 x 6 (restricted) >>
+%   \sxvCCCCs{D1,D2,D3,D4,D5,D6,D7,D8}  :   S7 . S8 D2 . D1
+%                                           S5 . S6 D4 . D3
+%                                           S3 . S4 D6 . D5
+%                                           S1 . S2 D8 . D7
+%  You should use '...' for other phantoms.
+%
+%  sxvCCCCsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 4 x 6 (another restricted one) >>
+%   \sxvJJJJs{D1,D2,D3,D4,D5,D6,D7,D8}  :    .  . D4 D3 D2 D1
+%                                            .  . D8 D7 D6 D5
+%                                           S5 S6 S7 S8  .  .
+%                                           S1 S2 S3 S4  .  .
+%  You should use '...' for other phantoms.
+%
+%  sxvJJJJsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 4 x 6 (another restricted one) >>
+%   \sxvKKKKs{D1,D2,D3,D4,D5,D6,D7,D8}  :   S5 S6 S7 S8  .  .
+%                                           S1 S2 S3 S4  .  .
+%                                            .  . D4 D3 D2 D1
+%                                            .  . D8 D7 D6 D5
+%  You should use '...' for other phantoms.
+%
+%  sxvKKKKsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 4 x 6 (another restricted one) >>
+%   \sxvNNNNs{D1,D2,D3,D4,D5,D6,D7,D8}  :    . S8  .  . D1  .
+%                                           S5 S6 S7 D4 D3 D2
+%                                           S2 S3 S4 D7 D6 D5
+%                                            . S1  .  . D8  .
+%  You should use '...' for other phantoms.
+%
+%  sxvNNNNsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 6 x 3 (restricted) >>
+%   \syhDDDDs{D1,D2,D3,D4,D5,D6,D7}  :      D1 D3 D6
+%                                           D2 D4 D7
+%                                            . D5  .
+%                                            . S5  .
+%                                           S7 S4 S2
+%                                           S6 S3 S1
+%  You should use '...' for other phantoms.
+%
+%  syhDDDDsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 3 x 6 (restricted) >>
+%   \sxvDDDDs{D1,D2,D3,D4,D5,D6,D7}  :      S6 S7  .  . D2 D1
+%                                           S3 S4 S5 D5 D4 D3
+%                                           S1 S2  .  . D7 D6
+%  You should use '...' for other phantoms.
+%
+%  sxvDDDDsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 8 x 3 (restricted) >>
+%   \syvPPPPs{D1,D2,D3,D4,D5,D6,D7,D8} :     . D1 D5
+%                                            . D2 D6
+%                                            . D3 D7
+%                                            . D4 D8
+%                                           S8 S4  .
+%                                           S7 S3  .
+%                                           S6 S2  .
+%                                           S5 S1  .
+%  You should use '...' for other phantoms.
+%
+%  syvPPPPsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 3 x 8 (restricted) >>
+%   \sxhPPPPs{D1,D2,D3,D4,D5,D6,D7,D8}  :   S1 S3 S5 S7  .  .  .  .
+%                                           S2 S4 S6 S8 D8 D6 D4 D2
+%                                            .  .  .  . D7 D5 D3 D1
+%  You should use '...' for other phantoms.
+%
+%  sxhPPPPsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 8 x 2 >>
+%   \syvBBBBs{D1,D2,D3,D4,D5,D6,D7,D8}  :   D2 D1
+%                                           D4 D3
+%                                           D6 D5
+%                                           D8 D7
+%                                           S7 S8
+%                                           S5 S6
+%                                           S3 S4
+%                                           S1 S2
+%
+%<< 12 x 2 (restricted) >>
+%   \syvLLLLs{D1,D2,D3,D4,D5,D6,D7,D8}  :    . D1
+%                                            . D2
+%                                            . D3
+%                                            . D4
+%                                           S8 D5
+%                                           S7 D6
+%                                           S6 D7
+%                                           S5 D8
+%                                           S4  .
+%                                           S3  .
+%                                           S2  .
+%                                           S1  .
+%  You should use '...' for other phantoms.
+%
+%  syvLLLLsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 12 x 2 (another restricted one) >>
+%   \syvMMMMs{D1,D2,D3,D4,D5,D6,D7,D8}  :   S8 .
+%                                           S7 .
+%                                           S6 .
+%                                           S5 .
+%                                           S4 D1
+%                                           S3 D2
+%                                           S2 D3
+%                                           S1 D4
+%                                            . D5
+%                                            . D6
+%                                            . D7
+%                                            . D8
+%  You should use '...' for other phantoms.
+%
+%  syvMMMMsplus is the same, but puts '+' sign in the phantom spots.
+%  You should use '.+.' for other phantoms.
+%
+%<< 2 x 8 >>
+%   \sxhBBBBs{D1,D2,D3,D4,D5,D6,D7,D8}  :   S1 S3 S5 S7 D8 D6 D4 D2
+%                                           S2 S4 S6 S8 D7 D5 D3 D1
+%
+%<< bigbone vertical >>
+%   \syvbigbone{D1,D2,D3,D4,D5,D6} :   S2  S1
+%                                      S4  S3
+%                                        S5
+%                                        S6
+%                                        D6
+%                                        D5
+%                                      D3  D4
+%                                      D1  D2
+%
+%<< bigbone horizontal >>
+%   \sxhbigbone{D1,D2,D3,D4,D5,D6} :   S1 S3             D4 D2
+%                                            S5 S6 D6 D5
+%                                      S2 S4             D3 D1
+%
+%<< hourglass >>
+%   \shhourglass{D1,D2,D3,D4}   :         D2
+%                                   D1          D3
+%                                       S4  D4
+%                                   S3          S1
+%                                         S2
+%
+%   \svhourglass{D1,D2,D3,D4}   :     S3    D1
+%                                        S4
+%                                   S2        D2
+%                                        D4
+%                                     S1    D3
+%
+%<< galaxy >>
+%   \shgalaxy{D1,D2,D3,D4}      :        D2
+%                                      D1  D3
+%                                   S4        D4
+%                                      S3  S1
+%                                        S2
+%
+%<< circle >>
+%   \shcircle{D1,D2,D3,D4}      :           D2
+%                                     D1          D3
+%
+%                                   S4              D4
+%
+%                                     S2          S1
+%                                           S2
+%
+%   \sscircle{D1,D2,D3,D4}      :        D2   D3
+%
+%                                   D1             D4
+%
+%                                   S4             S1
+%
+%                                        S3    S2
+%
+%<< thar >>
+%   \shvthar{D1,D2,D3,D4}
+%   \shvThar{D1,D2,D3,D4}
+%   \sHvthar{D1,D2,D3,D4}
+%   \shVthar{D1,D2,D3,D4}
+%   \sHVthar{D1,D2,D3,D4}       :        D4
+%                                        D3
+%                                   D1 D2  S2 S1
+%                                        S3
+%                                        S4
+%
+%   \slrthar{D1,D2,D3,D4}
+%   \slrThar{D1,D2,D3,D4}
+%   \sLRthar{D1,D2,D3,D4}       :     D1     D4
+%                                       D2 D3
+%                                       S3 S2
+%                                     S4     S1
+%
+%<< stars >>
+%   \systars{D1,D2,D3,D4}
+%   \syStars{D1,D2,D3,D4}   :     D2
+%                               D1  D3
+%                                 D4
+%                                 S4
+%                               S3  S1
+%                                 S2
+%
+%   \sxstars{D1,D2,D3,D4}
+%   \sxStars{D1,D2,D3,D4}   :     S3     D1
+%                               S2  S4 D4  D2
+%                                 S1     D3
+%
+%   \slstars{D1,D2,D3,D4}
+%   \slStars{D1,D2,D3,D4}   :     D2
+%                               D1  D3
+%                                 D4
+%                                         S4
+%                                       S3  S1
+%                                         S2
+%
+%   \srstars{D1,D2,D3,D4}
+%   \srStars{D1,D2,D3,D4}   :             D1
+%                                       D4  D2
+%                                         D3
+%                                 S3
+%                               S2  S4
+%                                 S1
+%
+%<< C1 phantom >>
+%   \sywtees{D1,D2,D3,D4}   :             D1
+%                               D4  D3
+%                                         D2
+%                                 S2
+%                                       S3  S4
+%                                 S1
+%
+%   \syetees{D1,D2,D3,D4}   :     D2
+%                                       D3  D4
+%                                 D1
+%                                         S1
+%                               S4  S3
+%                                         S2
+%
+%<< I formation etc. >>
+%   \systees{D1,D2,D3,D4}   :   D1  D2
+%                                 D3
+%                                 D4
+%                                 S4
+%                                 S3
+%                               S2  S1
+%
+%   \syntees{D1,D2,D3,D4}   :     D4
+%                                 D3
+%                               D2  D1
+%                               S1  S2
+%                                 S3
+%                                 S4
+%
+%   \sxwtees{D1,D2,D3,D4}   :   S2             D1
+%                                  S3 S4 D4 D3
+%                               S1             D2
+%
+%   \sxetees{D1,D2,D3,D4}   :         S1 D2
+%                               S4 S3       D3 D4
+%                                     S2 D1
+%
+%<< spindle >>
+%   \shspindle{D1,D2,D3,D4} :          D2 D3 D4
+%                                   D1          S1
+%                                      S4 S3 S2
+%
+%   \svspindle{D1,D2,D3,D4} :             D1
+%                                      S4    D2
+%                                      S3    D3
+%                                      S2    D4
+%                                         S1
+%
+%<< triple setup >>
+%   \syhtridiamonds{D1,D2,D3,D4,D5,D6}:
+%                                        D2
+%                                   D1        D3
+%                                        D4
+%                                        D6
+%                                   D5        S5
+%                                        S6
+%                                        S4
+%                                   S3        S1
+%                                        S2
+%
+%   \syvtridiamonds{D1,D2,D3,D4,D5,D6}:
+%                                         D1
+%
+%                                       D4  D2
+%
+%                                         D3
+%                                         D5
+%
+%                                       S6  D6
+%
+%                                         S5
+%                                         S3
+%
+%                                       S2  S4
+%
+%                                         S1
+%
+%   \sxvtridiamonds{D1,D2,D3,D4,D5,D6}:
+%                                     S3     D5     D1
+%
+%                                   S2  S4 S6  D6 D4  D2
+%
+%                                     S1     S5     D3
+%
+%   \sxhtridiamonds{D1,D2,D3,D4,D5,D6}:
+%                                    S2           S6           D4
+%                               S1        S3 S5        D5 D3        D1
+%                                    S4           D6           D2
+%
+%   \syhtwmstar{D1,D2,D3,D4,D5,D6}:
+%                                        D1
+%                                        D2
+%                                        D3
+%                                      D6  D4
+%                                        D5
+%                                        S5
+%                                      S4  S6
+%                                        S3
+%                                        S2
+%                                        S1
+%
+%   \sxvtwmstar{D1,D2,D3,D4,D5,D6}:
+%                                     S4     D6
+%                             S1 S2 S3  S5 D5  D3 D2 D1
+%                                     S6     D4
+%
+%------------------------------------------------------------------------------
+
+\newcount\@symD
+
+\def\symdanc{\@ifnextchar[{\@symmet}{\@symmet[0,0]}}
+\def\symboy{\@ifnextchar[{\@symboy}{\@symboy[0,0]}}
+\def\@symboy[#1,#2]{\@symmet[#1,#2]b}
+\def\symgirl{\@ifnextchar[{\@symgirl}{\@symgirl[0,0]}}
+\def\@symgirl[#1,#2]{\@symmet[#1,#2]g}
+\def\symphan{\@ifnextchar[{\@symphan}{\@symphan[0,0]}}
+\def\@symphan[#1,#2]{\@symmet[#1,#2]p}
+\def\symspot{\@ifnextchar[{\@symspot}{\@symspot[0,0]}}
+\def\@symspot[#1,#2]{\@symmet[#1,#2].}
+
+\def\@symmet[#1,#2]#3#4#5{%
+    \@ifnextchar*%
+    {\@@symmet[#1,#2]{#3}{#4}{#5}}%
+    {\@@symmet[#1,#2]{#3}{#4}{#5}*{}}%
+}
+
+\def\@@symmet[#1,#2]#3#4#5*#6{%
+    \def\@sw{#6}\def\@sww{}%
+    \def\@sw{#4}\def\@swa{1}\def\@swb{2}\def\@swc{3}\def\@swd{4}\def\@swe{.}%
+    \ifx\@sw\@swe\def\@c{}%
+    \else\ifx\@sw\@swa\def\@c{3}%
+    \else\ifx\@sw\@swb\def\@c{4}%
+    \else\ifx\@sw\@swc\def\@c{1}%
+    \else\ifx\@sw\@swd\def\@c{2}%
+    \else\def\@c{\@@@symmet#4}%
+    \fi\fi\fi\fi\fi%
+    \def\@sw{#5}\def\@swe{.}\def\@swf{n}\def\@swg{s}\def\@swh{e}\def\@swi{w}%
+    \def\@swj{v}\def\@swk{h}\def\@swl{r}\def\@swm{l}\def\@swn{+}\def\@swo{x}%
+    \ifx\@sw\@swe\def\@d{.}%
+    \else\ifx\@sw\@swf\def\@d{s}%
+    \else\ifx\@sw\@swg\def\@d{n}%
+    \else\ifx\@sw\@swh\def\@d{w}%
+    \else\ifx\@sw\@swi\def\@d{e}%
+    \else\ifx\@sw\@swa\def\@d{3}%
+    \else\ifx\@sw\@swb\def\@d{4}%
+    \else\ifx\@sw\@swc\def\@d{1}%
+    \else\ifx\@sw\@swd\def\@d{2}%
+    \else\ifx\@sw\@swj\def\@d{v}%
+    \else\ifx\@sw\@swk\def\@d{h}%
+    \else\ifx\@sw\@swl\def\@d{r}%
+    \else\ifx\@sw\@swm\def\@d{l}%
+    \else\ifx\@sw\@swn\def\@d{+}%
+    \else\ifx\@sw\@swo\def\@d{x}%
+    \else\@symdir#5]\def\@d{\@symD}%
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi%
+    \def\@sw{#6}\def\@swa{}\def\@swb{\@symD}%
+    \ifx\@sw\@swa
+        \ifx\@d\@swb\@dancer[-#1,-#2]{#3}{\@c}{0\@d}%
+        \else\@dancer[-#1,-#2]{#3}{\@c}{\@d}%
+        \fi%
+    \else
+        \ifx\@d\@swb\@dancer[-#1,-#2]{#3}{\@c}{0\@d}*{\@@@symmet#6}%
+        \else\@dancer[-#1,-#2]{#3}{\@c}{\@d}*{\@@@symmet#6}%
+        \fi%
+    \fi%
+}
+
+\def\@symdir{\@ifnextchar0{\@@symdir}{\@@symdir0}}
+\def\@@symdir0#1]{\global\@symD=#1\global\advance\@symD 180}
+
+\def\@@@symmet#1{%
+    \ifx#1\danc\def\@symmet@{\symdanc}%
+    \else\ifx#1\boy\def\@symmet@{\symboy}%
+    \else\ifx#1\girl\def\@symmet@{\symgirl}%
+    \else\ifx#1\phan\def\@symmet@{\symphan}%
+    \else\ifx#1\spot\def\@symmet@{\symspot}%
+    \else\ifx#1\sdarrow\def\@symmet@{\symarrow}%
+    \else\def\@symmet@{#1}%
+    \fi\fi\fi\fi\fi\fi%
+    \@symmet@%
+}
+
+\def\symarrow{\@ifnextchar[{\@symarrow}{\@symarrow[0,0]}}
+\def\@symarrow[#1,#2]{%
+    \@ifnextchar({\@@symarrow[#1,#2]}{\@@symarrow[#1,#2](1,1)}%
+}
+
+\def\@@symarrow[#1,#2](#3,#4)#5#6#7{{%
+    \count1=#6 \advance\count1 180%
+    \@@sdarrow[-#1,-#2](#3,#4){#5}{\count1}{#7}%
+}}
+
+
+%-- 1 x 8 --%
+\def\sxhlines{\@ifnextchar[{\@sxhlines}{\@sxhlines[1,1]}}
+\def\@sxhlines[#1]#2{\@@sxhlines[#1][#2]}
+\def\@@sxhlines[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2 & \@symmet[0,0]#3 & \@symmet[0,0]#4 & \@symmet[0,0]#5 &
+    \@dancer[0,0]#5 & \@dancer[0,0]#4 & \@dancer[0,0]#3 & \@dancer[0,0]#2 \cr
+    }%
+}
+
+%-- 8 x 1 --%
+\def\syvlines{\@ifnextchar[{\@syvlines}{\@syvlines[1,1]}}
+\def\@syvlines[#1]#2{\@@syvlines[#1][#2]}
+\def\@@syvlines[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2 \cr \@dancer[0,0]#3 \cr
+    \@dancer[0,0]#4 \cr \@dancer[0,0]#5 \cr
+    \@symmet[0,0]#5 \cr \@symmet[0,0]#4 \cr
+    \@symmet[0,0]#3 \cr \@symmet[0,0]#2 \cr
+    }%
+}
+
+%-- 2 x 4 --%
+\def\syhlines{\@ifnextchar[{\@syhlines}{\@syhlines[1,1]}}
+\def\@syhlines[#1]#2{\@@syhlines[#1][#2]}
+\def\@@syhlines[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2 & \@dancer[0,0]#3 & \@dancer[0,0]#4 & \@dancer[0,0]#5 \cr
+    \@symmet[0,0]#5 & \@symmet[0,0]#4 & \@symmet[0,0]#3 & \@symmet[0,0]#2 \cr
+    }%
+}
+
+%-- 4 x 2 --%
+\def\sxvlines{\@ifnextchar[{\@sxvlines}{\@sxvlines[1,1]}}
+\def\@sxvlines[#1]#2{\@@sxvlines[#1][#2]}
+\def\@@sxvlines[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#5 & \@dancer[0,0]#2 \cr
+    \@symmet[0,0]#4 & \@dancer[0,0]#3 \cr
+    \@symmet[0,0]#3 & \@dancer[0,0]#4 \cr
+    \@symmet[0,0]#2 & \@dancer[0,0]#5 \cr
+    }%
+}
+
+%-- twin diamonds --%
+\def\syhdiamonds{\@ifnextchar[{\@syhdiamonds}{\@syhdiamonds[1,1]}}
+\def\@syhdiamonds[#1]#2{\@@syhdiamonds[#1][#2]}
+\def\@@syhdiamonds[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                     & \@dancer[0,0]#3 &                  \cr
+    \@dancer[0,50]#2 & \@dancer[0,0]#5 & \@dancer[0,50]#4 \cr
+    \@symmet[0,50]#4 & \@symmet[0,0]#5 & \@symmet[0,50]#2 \cr
+                     & \@symmet[0,0]#3 &                  \cr
+    }%
+}
+
+\def\sxvdiamonds{\@ifnextchar[{\@sxvdiamonds}{\@sxvdiamonds[1,1]}}
+\def\@sxvdiamonds[#1]#2{\@@sxvdiamonds[#1][#2]}
+\def\@@sxvdiamonds[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                & \@symmet[50,0]#4 & \@dancer[50,0]#2 &                 \cr
+\@symmet[0,0]#3 & \@symmet[0,0]#5  & \@dancer[0,0]#5  & \@dancer[0,0]#3 \cr
+                & \@symmet[50,0]#2 & \@dancer[50,0]#4 &                 \cr
+    }%
+}
+
+%-- big diamonds --%
+\def\syhbigdiamonds{\@ifnextchar[{\@syhbigdiamonds}{\@syhbigdiamonds[1,1]}}
+\def\@syhbigdiamonds[#1]#2{\@@syhbigdiamonds[#1][#2]}
+\def\@@syhbigdiamonds[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+                     &                  & \@dancer[0,0]#4 &                  &                  \cr
+    \@dancer[0,50]#2 & \@dancer[0,50]#3 & \@dancer[0,0]#7 & \@dancer[0,50]#6 & \@dancer[0,50]#5 \cr
+    \@symmet[0,50]#5 & \@symmet[0,50]#6 & \@symmet[0,0]#7 & \@symmet[0,50]#3 & \@symmet[0,50]#2 \cr
+                     &                  & \@symmet[0,0]#4 &                  &                  \cr
+    }%
+}
+
+\def\sxvbigdiamonds{\@ifnextchar[{\@sxvbigdiamonds}{\@sxvbigdiamonds[1,1]}}
+\def\@sxvbigdiamonds[#1]#2{\@@sxvbigdiamonds[#1][#2]}
+\def\@@sxvbigdiamonds[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+                & \@symmet[50,0]#5 & \@dancer[50,0]#2 &                 \cr
+                & \@symmet[50,0]#6 & \@dancer[50,0]#3 &                 \cr
+\@symmet[0,0]#4 & \@symmet[0,0]#7  & \@dancer[0,0]#7  & \@dancer[0,0]#4 \cr
+                & \@symmet[50,0]#3 & \@dancer[50,0]#6 &                 \cr
+                & \@symmet[50,0]#2 & \@dancer[50,0]#5 &                 \cr
+    }%
+}
+
+
+%-- pp diamonds --%
+\def\syvdiamonds{\@ifnextchar[{\@syvdiamonds}{\@syvdiamonds[1,1]}}
+\def\@syvdiamonds[#1]#2{\@@syvdiamonds[#1][#2]}
+\def\@@syvdiamonds[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+    \@dancer[50,0]#2 &                  \cr
+    \@dancer[0,0]#5  & \@dancer[0,0]#3  \cr
+    \@dancer[50,0]#4 &                  \cr
+                     & \@symmet[50,0]#4 \cr
+    \@symmet[0,0]#3  & \@symmet[0,0]#5  \cr
+                     & \@symmet[50,0]#2 \cr
+    }%
+}
+
+\def\sxhdiamonds{\@ifnextchar[{\@sxhdiamonds}{\@sxhdiamonds[1,1]}}
+\def\@sxhdiamonds[#1]#2{\@@sxhdiamonds[#1][#2]}
+\def\@@sxhdiamonds[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+    \@symmet[0,50]#2 & \@symmet[0,0]#3 & \@symmet[0,50]#4 &
+                     & \@dancer[0,0]#5 &                  \cr
+                     & \@symmet[0,0]#5 &                  &
+    \@dancer[0,50]#4 & \@dancer[0,0]#3 & \@dancer[0,50]#2 \cr
+    }%
+}
+
+%-- 3 x 1 diamonds --%
+
+\def\shthreebyonedmd{\@ifnextchar[{\@shthreebyonedmd}{\@shthreebyonedmd[1,1]}}
+\def\@shthreebyonedmd[#1]#2{\@@shthreebyonedmd[#1][#2]}
+\def\@@shthreebyonedmd[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                      &                   & \@symmet[-50,0]#5 &
+                      &                   &                   \cr
+                      &                   &                   &
+    \@dancer[0,-50]#4 & \@dancer[0,-50]#3 & \@dancer[0,-50]#2 \cr
+    \@symmet[0,-50]#2 & \@symmet[0,-50]#3 & \@symmet[0,-50]#4 &
+                      &                   &                   \cr
+                      &                   &                   &
+    \@dancer[-50,0]#5 &                   &                   \cr
+    }%
+}
+
+\def\svthreebyonedmd{\@ifnextchar[{\@svthreebyonedmd}{\@svthreebyonedmd[1,1]}}
+\def\@svthreebyonedmd[#1]#2{\@@svthreebyonedmd[#1][#2]}
+\def\@@svthreebyonedmd[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                      & \@dancer[50,0]#2 &                  &                   \cr
+                      & \@dancer[50,0]#3 &                  &                   \cr
+                      & \@dancer[50,0]#4 &                  & \@dancer[0,-50]#5 \cr
+    \@symmet[0,-50]#5 &                  & \@symmet[50,0]#4 &                   \cr
+                      &                  & \@symmet[50,0]#3 &                   \cr
+                      &                  & \@symmet[50,0]#2 &                   \cr
+    }%
+}
+
+%-- crosswaves --%
+
+\def\shcrosswave{\@ifnextchar[{\@shcrosswave}{\@shcrosswave[1,1]}}
+\def\@shcrosswave[#1]#2{\@@shcrosswave[#1][#2]}
+\def\@@shcrosswave[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                      &                   & \@dancer[50,0]#2  &                  &                   &                   \cr
+                      &                   & \@dancer[50,0]#3  &                  & \@dancer[0,-50]#5 & \@dancer[0,-50]#4 \cr
+    \@symmet[0,-50]#4 & \@symmet[0,-50]#5 &                   & \@symmet[50,0]#3 &                   &                   \cr
+                      &                   &                   & \@symmet[50,0]#2 &                   &                   \cr
+    }%
+}
+
+\def\svcrosswave{\@ifnextchar[{\@svcrosswave}{\@svcrosswave[1,1]}}
+\def\@svcrosswave[#1]#2{\@@svcrosswave[#1][#2]}
+\def\@@svcrosswave[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                       & \@symmet[-50,0]#4 &                   &                   \cr
+                       & \@symmet[-50,0]#5 &                   &                   \cr
+                       &                   & \@dancer[0,-50]#3 & \@dancer[0,-50]#2 \cr
+     \@symmet[0,-50]#2 & \@symmet[0,-50]#3 &                   &                   \cr
+                       &                   & \@dancer[-50,0]#5 &                   \cr
+                       &                   & \@dancer[-50,0]#4 &                   \cr
+    }%
+}
+
+%-- 3 x 1 stars --%
+
+\def\shthreebyonestar{\@ifnextchar[{\@shthreebyonestar}{\@shthreebyonestar[1,1]}}
+\def\@shthreebyonestar[#1]#2{\@@shthreebyonestar[#1][#2]}
+\def\@@shthreebyonestar[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                       &                   & \@symmet[-50,0]#5 &
+     \@dancer[0,-50]#4 & \@dancer[0,-50]#3 & \@dancer[0,-50]#2 \cr
+     \@symmet[0,-50]#2 & \@symmet[0,-50]#3 & \@symmet[0,-50]#4 &
+     \@dancer[-50,0]#5 &                   &                   \cr
+    }%
+}
+
+\def\svthreebyonestar{\@ifnextchar[{\@svthreebyonestar}{\@svthreebyonestar[1,1]}}
+\def\@svthreebyonestar[#1]#2{\@@svthreebyonestar[#1][#2]}
+\def\@@svthreebyonestar[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+     \@dancer[50,0]#2  &                   \cr
+     \@dancer[50,0]#3  &                   \cr
+     \@dancer[50,0]#4  & \@dancer[0,-50]#5 \cr
+     \@symmet[0,-50]#5 & \@symmet[50,0]#4  \cr
+                       & \@symmet[50,0]#3  \cr
+                       & \@symmet[50,0]#2  \cr
+    }%
+}
+
+%-- 1 x 3 diamonds --%
+
+\def\shonebythreedmd{\@ifnextchar[{\@shonebythreedmd}{\@shonebythreedmd[1,1]}}
+\def\@shonebythreedmd[#1]#2{\@@shonebythreedmd[#1][#2]}
+\def\@@shonebythreedmd[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                      &                   &                   & \@symmet[0,0]#5   &
+    \@dancer[0,-50]#4 & \@dancer[0,-50]#3 & \@dancer[0,-50]#2 \cr
+    \@symmet[0,-50]#2 & \@symmet[0,-50]#3 & \@symmet[0,-50]#4 & \@dancer[0,0]#5   &
+                      &                   &                   \cr
+    }%
+}
+
+\def\svonebythreedmd{\@ifnextchar[{\@svonebythreedmd}{\@svonebythreedmd[1,1]}}
+\def\@svonebythreedmd[#1]#2{\@@svonebythreedmd[#1][#2]}
+\def\@@svonebythreedmd[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+     \@dancer[50,0]#2  &                   \cr
+     \@dancer[50,0]#3  &                   \cr
+     \@dancer[50,0]#4  &                   \cr
+     \@symmet[0,0]#5   & \@dancer[0,0]#5   \cr
+                       & \@symmet[50,0]#4  \cr
+                       & \@symmet[50,0]#3  \cr
+                       & \@symmet[50,0]#2  \cr
+    }%
+}
+
+%-- 4 x 3 --%
+\def\syhBBBs{\@ifnextchar[{\@syhBBBs}{\@syhBBBs[1,1]}}
+\def\@syhBBBs[#1]#2{\@@syhBBBs[#1][#2]}
+\def\@@syhBBBs[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2 & \@dancer[0,0]#4 & \@dancer[0,0]#6 \cr
+    \@dancer[0,0]#3 & \@dancer[0,0]#5 & \@dancer[0,0]#7 \cr
+    \@symmet[0,0]#7 & \@symmet[0,0]#5 & \@symmet[0,0]#3 \cr
+    \@symmet[0,0]#6 & \@symmet[0,0]#4 & \@symmet[0,0]#2 \cr
+    }%
+}
+
+\def\syhDBDs{\@ifnextchar[{\@syhDBDs}{\@syhDBDs[1,1]}}
+\def\@syhDBDs[#1]#2{\@@syhDBDs[#1][#2]}
+\def\@@syhDBDs[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                    & \@dancer[0,0]#3 &                 \cr
+    \@dancer[0,0]#2 & \@dancer[0,0]#4 & \@dancer[0,0]#5 \cr
+    \@symmet[0,0]#5 & \@symmet[0,0]#4 & \@symmet[0,0]#2 \cr
+                    & \@symmet[0,0]#3 &                 \cr
+    }%
+}
+
+%-- 2 x 6 --%
+\def\sxhBBBs{\@ifnextchar[{\@sxhBBBs}{\@sxhBBBs[1,1]}}
+\def\@sxhBBBs[#1]#2{\@@sxhBBBs[#1][#2]}
+\def\@@sxhBBBs[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2 & \@symmet[0,0]#4 & \@symmet[0,0]#6 &
+    \@dancer[0,0]#7 & \@dancer[0,0]#5 & \@dancer[0,0]#3 \cr
+    \@symmet[0,0]#3 & \@symmet[0,0]#5 & \@symmet[0,0]#7 &
+    \@dancer[0,0]#6 & \@dancer[0,0]#4 & \@dancer[0,0]#2 \cr
+    }%
+}
+
+%-- 2 x 5 --%
+\def\sxhBBFs{\@ifnextchar[{\@sxhBBFs}{\@sxhBBFs[1,1]}}
+\def\@sxhBBFs[#1]#2{\@@sxhBBFs[#1][#2]}
+\def\@@sxhBBFs[#1][#2,#3,#4,#5,#6]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2 & \@symmet[0,0]#4 & \@symmet[0,0]#6 &
+    \@dancer[0,0]#5 & \@dancer[0,0]#3 \cr
+    \@symmet[0,0]#3 & \@symmet[0,0]#5 & \@dancer[0,0]#6 &
+    \@dancer[0,0]#4 & \@dancer[0,0]#2 \cr
+    }%
+}
+
+%-- 2 x 7 --%
+\def\sxhBBVs{\@ifnextchar[{\@sxhBBVs}{\@sxhBBVs[1,1]}}
+\def\@sxhBBVs[#1]#2{\@@sxhBBVs[#1][#2]}
+\def\@@sxhBBVs[#1][#2,#3,#4,#5,#6,#7,#8]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2 & \@symmet[0,0]#4 & \@symmet[0,0]#6 & \@symmet[0,0]#8 &
+    \@dancer[0,0]#7 & \@dancer[0,0]#5 & \@dancer[0,0]#3 \cr
+    \@symmet[0,0]#3 & \@symmet[0,0]#5 & \@symmet[0,0]#7 & \@dancer[0,0]#8 &
+    \@dancer[0,0]#6 & \@dancer[0,0]#4 & \@dancer[0,0]#2 \cr
+    }%
+}
+
+%-- 12 x 1 --%
+\def\syvLLLs{\@ifnextchar[{\@syvLLLs}{\@syvLLLs[1,1]}}
+\def\@syvLLLs[#1]#2{\@@syvLLLs[#1][#2]}
+\def\@@syvLLLs[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2 \cr \@dancer[0,0]#3 \cr
+    \@dancer[0,0]#4 \cr \@dancer[0,0]#5 \cr
+    \@dancer[0,0]#6 \cr \@dancer[0,0]#7 \cr
+    \@symmet[0,0]#7 \cr \@symmet[0,0]#6 \cr
+    \@symmet[0,0]#5 \cr \@symmet[0,0]#4 \cr
+    \@symmet[0,0]#3 \cr \@symmet[0,0]#2 \cr
+    }%
+}
+
+%-- 16 x 1 --%
+\def\syvEEEEs{\@ifnextchar[{\@syvEEEEs}{\@syvEEEEs[1,1]}}
+\def\@syvEEEEs[#1]#2{\@@syvEEEEs[#1][#2]}
+\def\@@syvEEEEs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2 \cr \@dancer[0,0]#3 \cr
+    \@dancer[0,0]#4 \cr \@dancer[0,0]#5 \cr
+    \@dancer[0,0]#6 \cr \@dancer[0,0]#7 \cr
+    \@dancer[0,0]#8 \cr \@dancer[0,0]#9 \cr
+    \@symmet[0,0]#9 \cr \@symmet[0,0]#8 \cr
+    \@symmet[0,0]#7 \cr \@symmet[0,0]#6 \cr
+    \@symmet[0,0]#5 \cr \@symmet[0,0]#4 \cr
+    \@symmet[0,0]#3 \cr \@symmet[0,0]#2 \cr
+    }%
+}
+
+%-- 1 x 12 --%
+\def\sxhLLLs{\@ifnextchar[{\@sxhLLLs}{\@sxhLLLs[1,1]}}
+\def\@sxhLLLs[#1]#2{\@@sxhLLLs[#1][#2]}
+\def\@@sxhLLLs[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2 & \@symmet[0,0]#3 & \@symmet[0,0]#4 &
+    \@symmet[0,0]#5 & \@symmet[0,0]#6 & \@symmet[0,0]#7 &
+    \@dancer[0,0]#7 & \@dancer[0,0]#6 & \@dancer[0,0]#5 &
+    \@dancer[0,0]#4 & \@dancer[0,0]#3 & \@dancer[0,0]#2 \cr
+    }%
+}
+
+%-- 1 x 16 --%
+\def\sxhEEEEs{\@ifnextchar[{\@sxhEEEEs}{\@sxhEEEEs[1,1]}}
+\def\@sxhEEEEs[#1]#2{\@@sxhEEEEs[#1][#2]}
+\def\@@sxhEEEEs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2 & \@symmet[0,0]#3 & \@symmet[0,0]#4 & \@symmet[0,0]#5 &
+    \@symmet[0,0]#6 & \@symmet[0,0]#7 & \@symmet[0,0]#8 & \@symmet[0,0]#9 &
+    \@dancer[0,0]#9 & \@dancer[0,0]#8 & \@dancer[0,0]#7 & \@dancer[0,0]#6 &
+    \@dancer[0,0]#5 & \@dancer[0,0]#4 & \@dancer[0,0]#3 & \@dancer[0,0]#2 \cr
+    }%
+}
+
+%-- 3 x 4 --%
+\def\sxvBBBs{\@ifnextchar[{\@sxvBBBs}{\@sxvBBBs[1,1]}}
+\def\@sxvBBBs[#1]#2{\@@sxvBBBs[#1][#2]}
+\def\@@sxvBBBs[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#6 & \@symmet[0,0]#7 & \@dancer[0,0]#3 & \@dancer[0,0]#2 \cr
+    \@symmet[0,0]#4 & \@symmet[0,0]#5 & \@dancer[0,0]#5 & \@dancer[0,0]#4 \cr
+    \@symmet[0,0]#2 & \@symmet[0,0]#3 & \@dancer[0,0]#7 & \@dancer[0,0]#6 \cr
+    }%
+}
+
+\def\sxvLBLs{\@ifnextchar[{\@sxvLBLs}{\@sxvLBLs[1,1]}}
+\def\@sxvLBLs[#1]#2{\@@sxvLBLs[#1][#2]}
+\def\@@sxvLBLs[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                    & \@symmet[0,0]#5 & \@dancer[0,0]#2 &                 \cr
+    \@symmet[0,0]#3 & \@symmet[0,0]#4 & \@dancer[0,0]#4 & \@dancer[0,0]#3 \cr
+                    & \@symmet[0,0]#2 & \@dancer[0,0]#5 &                 \cr
+    }%
+}
+
+%-- 6 x 2 --%
+\def\syvBBBs{\@ifnextchar[{\@syvBBBs}{\@syvBBBs[1,1]}}
+\def\@syvBBBs[#1]#2{\@@syvBBBs[#1][#2]}
+\def\@@syvBBBs[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#3 & \@dancer[0,0]#2 \cr
+    \@dancer[0,0]#5 & \@dancer[0,0]#4 \cr
+    \@dancer[0,0]#7 & \@dancer[0,0]#6 \cr
+    \@symmet[0,0]#6 & \@symmet[0,0]#7 \cr
+    \@symmet[0,0]#4 & \@symmet[0,0]#5 \cr
+    \@symmet[0,0]#2 & \@symmet[0,0]#3 \cr
+    }%
+}
+
+%-- 7 x 2 --%
+\def\syvBBVs{\@ifnextchar[{\@syvBBVs}{\@syvBBVs[1,1]}}
+\def\@syvBBVs[#1]#2{\@@syvBBVs[#1][#2]}
+\def\@@syvBBVs[#1][#2,#3,#4,#5,#6,#7,#8]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#3 & \@dancer[0,0]#2 \cr
+    \@dancer[0,0]#5 & \@dancer[0,0]#4 \cr
+    \@dancer[0,0]#7 & \@dancer[0,0]#6 \cr
+    \@symmet[0,0]#8 & \@dancer[0,0]#8 \cr
+    \@symmet[0,0]#6 & \@symmet[0,0]#7 \cr
+    \@symmet[0,0]#4 & \@symmet[0,0]#5 \cr
+    \@symmet[0,0]#2 & \@symmet[0,0]#3 \cr
+    }%
+}
+
+%-- 4 x 4 --%
+\def\syhBBBBs{\@ifnextchar[{\@syhBBBBs}{\@syhBBBBs[1,1]}}
+\def\@syhBBBBs[#1]#2{\@@syhBBBBs[#1][#2]}
+\def\@@syhBBBBs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2 & \@dancer[0,0]#4 & \@dancer[0,0]#6 & \@dancer[0,0]#8 \cr
+    \@dancer[0,0]#3 & \@dancer[0,0]#5 & \@dancer[0,0]#7 & \@dancer[0,0]#9 \cr
+    \@symmet[0,0]#9 & \@symmet[0,0]#7 & \@symmet[0,0]#5 & \@symmet[0,0]#3 \cr
+    \@symmet[0,0]#8 & \@symmet[0,0]#6 & \@symmet[0,0]#4 & \@symmet[0,0]#2 \cr
+    }%
+}
+
+%-- 6 x 4 --%
+\def\syhCCCCs{\@ifnextchar[{\@syhCCCCs}{\@syhCCCCs[1,1]}}
+\def\@syhCCCCs[#1]#2{\@@syhCCCCs[#1][#2]}
+\def\@@syhCCCCs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2 & \@dancer[0,0]#4 & \@dancer[0,0]#6 & \@dancer[0,0]#8 \cr
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    \@dancer[0,0]#3 & \@dancer[0,0]#5 & \@dancer[0,0]#7 & \@dancer[0,0]#9 \cr
+    \@symmet[0,0]#9 & \@symmet[0,0]#7 & \@symmet[0,0]#5 & \@symmet[0,0]#3 \cr
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    \@symmet[0,0]#8 & \@symmet[0,0]#6 & \@symmet[0,0]#4 & \@symmet[0,0]#2 \cr
+    }%
+}
+
+\def\syhCCCCsplus{\@ifnextchar[{\@syhCCCCsplus}{\@syhCCCCsplus[1,1]}}
+\def\@syhCCCCsplus[#1]#2{\@@syhCCCCsplus[#1][#2]}
+\def\@@syhCCCCsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2  & \@dancer[0,0]#4  & \@dancer[0,0]#6  & \@dancer[0,0]#8  \cr
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    \@dancer[0,0]#3  & \@dancer[0,0]#5  & \@dancer[0,0]#7  & \@dancer[0,0]#9  \cr
+    \@symmet[0,0]#9  & \@symmet[0,0]#7  & \@symmet[0,0]#5  & \@symmet[0,0]#3  \cr
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#8  & \@symmet[0,0]#6  & \@symmet[0,0]#4  & \@symmet[0,0]#2  \cr
+    }%
+}
+
+%-- another 6 x 4 --%
+\def\syhJJJJs{\@ifnextchar[{\@syhJJJJs}{\@syhJJJJs[1,1]}}
+\def\@syhJJJJs[#1]#2{\@@syhJJJJs[#1][#2]}
+\def\@@syhJJJJs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2  & \@dancer[0,0]#6  & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    \@dancer[0,0]#3  & \@dancer[0,0]#7  & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    \@dancer[0,0]#4  & \@dancer[0,0]#8  & \@symmet[0,0]#9  & \@symmet[0,0]#5  \cr
+    \@dancer[0,0]#5  & \@dancer[0,0]#9  & \@symmet[0,0]#8  & \@symmet[0,0]#4  \cr
+    \@dancer[0,0]... & \@dancer[0,0]... & \@symmet[0,0]#7  & \@symmet[0,0]#3  \cr
+    \@dancer[0,0]... & \@dancer[0,0]... & \@symmet[0,0]#6  & \@symmet[0,0]#2  \cr
+    }%
+}
+
+\def\syhJJJJsplus{\@ifnextchar[{\@syhJJJJsplus}{\@syhJJJJsplus[1,1]}}
+\def\@syhJJJJsplus[#1]#2{\@@syhJJJJsplus[#1][#2]}
+\def\@@syhJJJJsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2  & \@dancer[0,0]#6  & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    \@dancer[0,0]#3  & \@dancer[0,0]#7  & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    \@dancer[0,0]#4  & \@dancer[0,0]#8  & \@symmet[0,0]#9  & \@symmet[0,0]#5  \cr
+    \@dancer[0,0]#5  & \@dancer[0,0]#9  & \@symmet[0,0]#8  & \@symmet[0,0]#4  \cr
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@symmet[0,0]#7  & \@symmet[0,0]#3  \cr
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@symmet[0,0]#6  & \@symmet[0,0]#2  \cr
+    }%
+}
+
+%-- another 6 x 4 --%
+\def\syhKKKKs{\@ifnextchar[{\@syhKKKKs}{\@syhKKKKs[1,1]}}
+\def\@syhKKKKs[#1]#2{\@@syhKKKKs[#1][#2]}
+\def\@@syhKKKKs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]#2  & \@dancer[0,0]#6  \cr
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]#3  & \@dancer[0,0]#7  \cr
+    \@symmet[0,0]#9  & \@symmet[0,0]#5  & \@dancer[0,0]#4  & \@dancer[0,0]#8  \cr
+    \@symmet[0,0]#8  & \@symmet[0,0]#4  & \@dancer[0,0]#5  & \@dancer[0,0]#9  \cr
+    \@symmet[0,0]#7  & \@symmet[0,0]#3  & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    \@symmet[0,0]#6  & \@symmet[0,0]#2  & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    }%
+}
+
+\def\syhKKKKsplus{\@ifnextchar[{\@syhKKKKsplus}{\@syhKKKKsplus[1,1]}}
+\def\@syhKKKKsplus[#1]#2{\@@syhKKKKsplus[#1][#2]}
+\def\@@syhKKKKsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0]#2  & \@dancer[0,0]#6  \cr
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0]#3  & \@dancer[0,0]#7  \cr
+    \@symmet[0,0]#9  & \@symmet[0,0]#5  & \@dancer[0,0]#4  & \@dancer[0,0]#8  \cr
+    \@symmet[0,0]#8  & \@symmet[0,0]#4  & \@dancer[0,0]#5  & \@dancer[0,0]#9  \cr
+    \@symmet[0,0]#7  & \@symmet[0,0]#3  & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#6  & \@symmet[0,0]#2  & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    }%
+}
+
+%-- another 6 x 4 --%
+\def\syhNNNNs{\@ifnextchar[{\@syhNNNNs}{\@syhNNNNs[1,1]}}
+\def\@syhNNNNs[#1]#2{\@@syhNNNNs[#1][#2]}
+\def\@@syhNNNNs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]... & \@dancer[0,0]#3  & \@dancer[0,0]#6  & \@dancer[0,0]... \cr
+    \@dancer[0,0]#2  & \@dancer[0,0]#4  & \@dancer[0,0]#7  & \@dancer[0,0]#9  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#5  & \@dancer[0,0]#8  & \@dancer[0,0]... \cr
+    \@dancer[0,0]... & \@symmet[0,0]#8  & \@symmet[0,0]#5  & \@dancer[0,0]... \cr
+    \@symmet[0,0]#9  & \@symmet[0,0]#7  & \@symmet[0,0]#4  & \@symmet[0,0]#2  \cr
+    \@dancer[0,0]... & \@symmet[0,0]#6  & \@symmet[0,0]#3  & \@dancer[0,0]... \cr
+    }%
+}
+
+\def\syhNNNNsplus{\@ifnextchar[{\@syhNNNNsplus}{\@syhNNNNsplus[1,1]}}
+\def\@syhNNNNsplus[#1]#2{\@@syhNNNNsplus[#1][#2]}
+\def\@@syhNNNNsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0].+. & \@dancer[0,0]#3  & \@dancer[0,0]#6  & \@dancer[0,0].+. \cr
+    \@dancer[0,0]#2  & \@dancer[0,0]#4  & \@dancer[0,0]#7  & \@dancer[0,0]#9  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#5  & \@dancer[0,0]#8  & \@dancer[0,0].+. \cr
+    \@dancer[0,0].+. & \@symmet[0,0]#8  & \@symmet[0,0]#5  & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#9  & \@symmet[0,0]#7  & \@symmet[0,0]#4  & \@symmet[0,0]#2  \cr
+    \@dancer[0,0].+. & \@symmet[0,0]#6  & \@symmet[0,0]#3  & \@dancer[0,0].+. \cr
+    }%
+}
+
+%-- 4 x 6 --%
+\def\sxvCCCCs{\@ifnextchar[{\@sxvCCCCs}{\@sxvCCCCs[1,1]}}
+\def\@sxvCCCCs[#1]#2{\@@sxvCCCCs[#1][#2]}
+\def\@@sxvCCCCs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#8 & \@dancer[0,0]... & \@symmet[0,0]#9 &
+    \@dancer[0,0]#3 & \@dancer[0,0]... & \@dancer[0,0]#2 \cr
+    \@symmet[0,0]#6 & \@dancer[0,0]... & \@symmet[0,0]#7 &
+    \@dancer[0,0]#5 & \@dancer[0,0]... & \@dancer[0,0]#4 \cr
+    \@symmet[0,0]#4 & \@dancer[0,0]... & \@symmet[0,0]#5 &
+    \@dancer[0,0]#7 & \@dancer[0,0]... & \@dancer[0,0]#6 \cr
+    \@symmet[0,0]#2 & \@dancer[0,0]... & \@symmet[0,0]#3 &
+    \@dancer[0,0]#9 & \@dancer[0,0]... & \@dancer[0,0]#8 \cr
+    }%
+}
+
+\def\sxvCCCCsplus{\@ifnextchar[{\@sxvCCCCsplus}{\@sxvCCCCsplus[1,1]}}
+\def\@sxvCCCCsplus[#1]#2{\@@sxvCCCCsplus[#1][#2]}
+\def\@@sxvCCCCsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#8 & \@dancer[0,0].+. & \@symmet[0,0]#9 &
+    \@dancer[0,0]#3 & \@dancer[0,0].+. & \@dancer[0,0]#2 \cr
+    \@symmet[0,0]#6 & \@dancer[0,0].+. & \@symmet[0,0]#7 &
+    \@dancer[0,0]#5 & \@dancer[0,0].+. & \@dancer[0,0]#4 \cr
+    \@symmet[0,0]#4 & \@dancer[0,0].+. & \@symmet[0,0]#5 &
+    \@dancer[0,0]#7 & \@dancer[0,0].+. & \@dancer[0,0]#6 \cr
+    \@symmet[0,0]#2 & \@dancer[0,0].+. & \@symmet[0,0]#3 &
+    \@dancer[0,0]#9 & \@dancer[0,0].+. & \@dancer[0,0]#8 \cr
+    }%
+}
+
+%-- another 4 x 6 --%
+\def\sxvJJJJs{\@ifnextchar[{\@sxvJJJJs}{\@sxvJJJJs[1,1]}}
+\def\@sxvJJJJs[#1]#2{\@@sxvJJJJs[#1][#2]}
+\def\@@sxvJJJJs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]#5  &
+    \@dancer[0,0]#4  & \@dancer[0,0]#3  & \@dancer[0,0]#2  \cr
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]#9  &
+    \@dancer[0,0]#8  & \@dancer[0,0]#7  & \@dancer[0,0]#6  \cr
+    \@symmet[0,0]#6  & \@symmet[0,0]#7  & \@symmet[0,0]#8  &
+    \@symmet[0,0]#9  & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    \@symmet[0,0]#2  & \@symmet[0,0]#3  & \@symmet[0,0]#4  &
+    \@symmet[0,0]#5  & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    }%
+}
+
+\def\sxvJJJJsplus{\@ifnextchar[{\@sxvJJJJsplus}{\@sxvJJJJsplus[1,1]}}
+\def\@sxvJJJJsplus[#1]#2{\@@sxvJJJJsplus[#1][#2]}
+\def\@@sxvJJJJsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0]#5  &
+    \@dancer[0,0]#4  & \@dancer[0,0]#3  & \@dancer[0,0]#2  \cr
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0]#9  &
+    \@dancer[0,0]#8  & \@dancer[0,0]#7  & \@dancer[0,0]#6  \cr
+    \@symmet[0,0]#6  & \@symmet[0,0]#7  & \@symmet[0,0]#8  &
+    \@symmet[0,0]#9  & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#2  & \@symmet[0,0]#3  & \@symmet[0,0]#4  &
+    \@symmet[0,0]#5  & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    }%
+}
+
+%-- another 4 x 6 --%
+\def\sxvKKKKs{\@ifnextchar[{\@sxvKKKKs}{\@sxvKKKKs[1,1]}}
+\def\@sxvKKKKs[#1]#2{\@@sxvKKKKs[#1][#2]}
+\def\@@sxvKKKKs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#6  & \@symmet[0,0]#7  & \@symmet[0,0]#8  &
+    \@symmet[0,0]#9  & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    \@symmet[0,0]#2  & \@symmet[0,0]#3  & \@symmet[0,0]#4  &
+    \@symmet[0,0]#5  & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]#5  &
+    \@dancer[0,0]#4  & \@dancer[0,0]#3  & \@dancer[0,0]#2  \cr
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]#9  &
+    \@dancer[0,0]#8  & \@dancer[0,0]#7  & \@dancer[0,0]#6  \cr
+    }%
+}
+
+\def\sxvKKKKsplus{\@ifnextchar[{\@sxvKKKKsplus}{\@sxvKKKKsplus[1,1]}}
+\def\@sxvKKKKsplus[#1]#2{\@@sxvKKKKsplus[#1][#2]}
+\def\@@sxvKKKKsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#6  & \@symmet[0,0]#7  & \@symmet[0,0]#8  &
+    \@symmet[0,0]#9  & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#2  & \@symmet[0,0]#3  & \@symmet[0,0]#4  &
+    \@symmet[0,0]#5  & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0]#5  &
+    \@dancer[0,0]#4  & \@dancer[0,0]#3  & \@dancer[0,0]#2  \cr
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0]#9  &
+    \@dancer[0,0]#8  & \@dancer[0,0]#7  & \@dancer[0,0]#6  \cr
+    }%
+}
+
+%-- another 4 x 6 --%
+\def\sxvNNNNs{\@ifnextchar[{\@sxvNNNNs}{\@sxvNNNNs[1,1]}}
+\def\@sxvNNNNs[#1]#2{\@@sxvNNNNs[#1][#2]}
+\def\@@sxvNNNNs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]... & \@symmet[0,0]#9  & \@dancer[0,0]... &
+    \@dancer[0,0]... & \@dancer[0,0]#2  & \@dancer[0,0]... \cr
+    \@symmet[0,0]#6  & \@symmet[0,0]#7  & \@symmet[0,0]#8  &
+    \@dancer[0,0]#5  & \@dancer[0,0]#4  & \@dancer[0,0]#3  \cr
+    \@symmet[0,0]#3  & \@symmet[0,0]#4  & \@symmet[0,0]#5  &
+    \@dancer[0,0]#8  & \@dancer[0,0]#7  & \@dancer[0,0]#6  \cr
+    \@dancer[0,0]... & \@symmet[0,0]#2  & \@dancer[0,0]... &
+    \@dancer[0,0]... & \@dancer[0,0]#9  & \@dancer[0,0]... \cr
+    }%
+}
+
+\def\sxvNNNNsplus{\@ifnextchar[{\@sxvNNNNsplus}{\@sxvNNNNsplus[1,1]}}
+\def\@sxvNNNNsplus[#1]#2{\@@sxvNNNNsplus[#1][#2]}
+\def\@@sxvNNNNsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0].+. & \@symmet[0,0]#9  & \@dancer[0,0].+. &
+    \@dancer[0,0].+. & \@dancer[0,0]#2  & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#6  & \@symmet[0,0]#7  & \@symmet[0,0]#8  &
+    \@dancer[0,0]#5  & \@dancer[0,0]#4  & \@dancer[0,0]#3  \cr
+    \@symmet[0,0]#3  & \@symmet[0,0]#4  & \@symmet[0,0]#5  &
+    \@dancer[0,0]#8  & \@dancer[0,0]#7  & \@dancer[0,0]#6  \cr
+    \@dancer[0,0].+. & \@symmet[0,0]#2  & \@dancer[0,0].+. &
+    \@dancer[0,0].+. & \@dancer[0,0]#9  & \@dancer[0,0].+. \cr
+    }%
+}
+
+%-- 3 x 6 --%
+\def\syhDDDDs{\@ifnextchar[{\@syhDDDDs}{\@syhDDDDs[1,1]}}
+\def\@syhDDDDs[#1]#2{\@@syhDDDDs[#1][#2]}
+\def\@@syhDDDDs[#1][#2,#3,#4,#5,#6,#7,#8]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2 & \@dancer[0,0]#4 & \@dancer[0,0]#7 \cr
+    \@dancer[0,0]#3 & \@dancer[0,0]#5 & \@dancer[0,0]#8 \cr
+    \@dancer[0,0]... & \@dancer[0,0]#6 & \@dancer[0,0]... \cr
+    \@dancer[0,0]... & \@symmet[0,0]#6 & \@dancer[0,0]... \cr
+    \@symmet[0,0]#8 & \@symmet[0,0]#5 & \@symmet[0,0]#3 \cr
+    \@symmet[0,0]#7 & \@symmet[0,0]#4 & \@symmet[0,0]#2 \cr
+    }%
+}
+
+\def\syhDDDDsplus{\@ifnextchar[{\@syhDDDDsplus}{\@syhDDDDsplus[1,1]}}
+\def\@syhDDDDsplus[#1]#2{\@@syhDDDDsplus[#1][#2]}
+\def\@@syhDDDDsplus[#1][#2,#3,#4,#5,#6,#7,#8]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2 & \@dancer[0,0]#4 & \@dancer[0,0]#7 \cr
+    \@dancer[0,0]#3 & \@dancer[0,0]#5 & \@dancer[0,0]#8 \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#6 & \@dancer[0,0].+. \cr
+    \@dancer[0,0].+. & \@symmet[0,0]#6 & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#8 & \@symmet[0,0]#5 & \@symmet[0,0]#3 \cr
+    \@symmet[0,0]#7 & \@symmet[0,0]#4 & \@symmet[0,0]#2 \cr
+    }%
+}
+
+%-- 6 x 3 (restricted) --%
+\def\sxvDDDDs{\@ifnextchar[{\@sxvDDDDs}{\@sxvDDDDs[1,1]}}
+\def\@sxvDDDDs[#1]#2{\@@sxvDDDDs[#1][#2]}
+\def\@@sxvDDDDs[#1][#2,#3,#4,#5,#6,#7,#8]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#7  & \@symmet[0,0]#8 & \@dancer[0,0]... &
+    \@dancer[0,0]... & \@dancer[0,0]#3 & \@dancer[0,0]#2  \cr
+    \@symmet[0,0]#4  & \@symmet[0,0]#5 & \@symmet[0,0]#6  &
+    \@dancer[0,0]#6  & \@dancer[0,0]#5 & \@dancer[0,0]#4  \cr
+    \@symmet[0,0]#2  & \@symmet[0,0]#3 & \@dancer[0,0]... &
+    \@dancer[0,0]... & \@dancer[0,0]#8 & \@dancer[0,0]#7  \cr
+    }%
+}
+
+\def\sxvDDDDsplus{\@ifnextchar[{\@sxvDDDDsplus}{\@sxvDDDDsplus[1,1]}}
+\def\@sxvDDDDsplus[#1]#2{\@@sxvDDDDsplus[#1][#2]}
+\def\@@sxvDDDDsplus[#1][#2,#3,#4,#5,#6,#7,#8]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#7 & \@symmet[0,0]#8 & \@dancer[0,0].+. &
+    \@dancer[0,0].+. & \@dancer[0,0]#3 & \@dancer[0,0]#2 \cr
+    \@symmet[0,0]#4 & \@symmet[0,0]5 & \@symmet[0,0]#6 &
+    \@dancer[0,0]#6 & \@dancer[0,0]5 & \@dancer[0,0]#4 \cr
+    \@symmet[0,0]#2 & \@symmet[0,0]3 & \@dancer[0,0].+. &
+    \@dancer[0,0].+. & \@dancer[0,0]8 & \@dancer[0,0]#7 \cr
+    }%
+}
+
+%-- 8 x 3 (restricted) --%
+\def\syvPPPPs{\@ifnextchar[{\@syvPPPPs}{\@syvPPPPs[1,1]}}
+\def\@syvPPPPs[#1]#2{\@@syvPPPPs[#1][#2]}
+\def\@@syvPPPPs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]... & \@dancer[0,0]#2 & \@dancer[0,0]#6  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#3 & \@dancer[0,0]#7  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#4 & \@dancer[0,0]#8  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#5 & \@dancer[0,0]#9  \cr
+    \@symmet[0,0]#9  & \@symmet[0,0]#5 & \@dancer[0,0]... \cr
+    \@symmet[0,0]#8  & \@symmet[0,0]#4 & \@dancer[0,0]... \cr
+    \@symmet[0,0]#7  & \@symmet[0,0]#3 & \@dancer[0,0]... \cr
+    \@symmet[0,0]#6  & \@symmet[0,0]#2 & \@dancer[0,0]... \cr
+    }%
+}
+
+\def\syvPPPPsplus{\@ifnextchar[{\@syvPPPPsplus}{\@syvPPPPsplus[1,1]}}
+\def\@syvPPPPsplus[#1]#2{\@@syvPPPPsplus[#1][#2]}
+\def\@@syvPPPPsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0].+. & \@dancer[0,0]#2 & \@dancer[0,0]#6  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#3 & \@dancer[0,0]#7  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#4 & \@dancer[0,0]#8  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#5 & \@dancer[0,0]#9  \cr
+    \@symmet[0,0]#9  & \@symmet[0,0]#5 & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#8  & \@symmet[0,0]#4 & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#7  & \@symmet[0,0]#3 & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#6  & \@symmet[0,0]#2 & \@dancer[0,0].+. \cr
+    }%
+}
+
+
+
+%-- 3 x 8 (restricted) --%
+\def\sxhPPPPs{\@ifnextchar[{\@sxhPPPPs}{\@sxhPPPPs[1,1]}}
+\def\@sxhPPPPs[#1]#2{\@@sxhPPPPs[#1][#2]}
+\def\@@sxhPPPPs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2  & \@symmet[0,0]#4  & \@symmet[0,0]#6  & \@symmet[0,0]#8  &
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]... \cr
+    \@symmet[0,0]#3  & \@symmet[0,0]#5  & \@symmet[0,0]#7  & \@symmet[0,0]#9  &
+    \@dancer[0,0]#9  & \@dancer[0,0]#7  & \@dancer[0,0]#5  & \@dancer[0,0]#3  \cr 
+    \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]... & \@dancer[0,0]... &
+    \@dancer[0,0]#8  & \@dancer[0,0]#6  & \@dancer[0,0]#4  & \@dancer[0,0]#2  \cr
+    }%
+}
+
+\def\sxhPPPPsplus{\@ifnextchar[{\@sxhPPPPsplus}{\@sxhPPPPsplus[1,1]}}
+\def\@sxhPPPPsplus[#1]#2{\@@sxhPPPPsplus[#1][#2]}
+\def\@@sxhPPPPsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2  & \@symmet[0,0]#4  & \@symmet[0,0]#6  & \@symmet[0,0]#8  &
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#3  & \@symmet[0,0]#5  & \@symmet[0,0]#7  & \@symmet[0,0]#9  &
+    \@dancer[0,0]#9  & \@dancer[0,0]#7  & \@dancer[0,0]#5  & \@dancer[0,0]#3  \cr 
+    \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0].+. & \@dancer[0,0].+. &
+    \@dancer[0,0]#8  & \@dancer[0,0]#6  & \@dancer[0,0]#4  & \@dancer[0,0]#2  \cr
+    }%
+}
+
+%-- 2 x 8 --%
+\def\sxhBBBBs{\@ifnextchar[{\@sxhBBBBs}{\@sxhBBBBs[1,1]}}
+\def\@sxhBBBBs[#1]#2{\@@sxhBBBBs[#1][#2]}
+\def\@@sxhBBBBs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2 & \@symmet[0,0]#4 & \@symmet[0,0]#6 & \@symmet[0,0]#8 &
+    \@dancer[0,0]#9 & \@dancer[0,0]#7 & \@dancer[0,0]#5 & \@dancer[0,0]#3 \cr
+    \@symmet[0,0]#3 & \@symmet[0,0]#5 & \@symmet[0,0]#7 & \@symmet[0,0]#9 &
+    \@dancer[0,0]#8 & \@dancer[0,0]#6 & \@dancer[0,0]#4 & \@dancer[0,0]#2 \cr
+    }%
+}
+
+%-- 8 x 2 --%
+\def\syvBBBBs{\@ifnextchar[{\@syvBBBBs}{\@syvBBBBs[1,1]}}
+\def\@syvBBBBs[#1]#2{\@@syvBBBBs[#1][#2]}
+\def\@@syvBBBBs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#3 & \@dancer[0,0]#2 \cr
+    \@dancer[0,0]#5 & \@dancer[0,0]#4 \cr
+    \@dancer[0,0]#7 & \@dancer[0,0]#6 \cr
+    \@dancer[0,0]#9 & \@dancer[0,0]#8 \cr
+    \@symmet[0,0]#8 & \@symmet[0,0]#9 \cr
+    \@symmet[0,0]#6 & \@symmet[0,0]#7 \cr
+    \@symmet[0,0]#4 & \@symmet[0,0]#5 \cr
+    \@symmet[0,0]#2 & \@symmet[0,0]#3 \cr
+    }%
+}
+
+%-- 12 x 2 --%
+\def\syvLLLLs{\@ifnextchar[{\@syvLLLLs}{\@syvLLLLs[1,1]}}
+\def\@syvLLLLs[#1]#2{\@@syvLLLLs[#1][#2]}
+\def\@@syvLLLLs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]... & \@dancer[0,0]#2  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#3  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#4  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#5  \cr
+    \@symmet[0,0]#9  & \@dancer[0,0]#6  \cr
+    \@symmet[0,0]#8  & \@dancer[0,0]#7  \cr
+    \@symmet[0,0]#7  & \@dancer[0,0]#8  \cr
+    \@symmet[0,0]#6  & \@dancer[0,0]#9  \cr
+    \@symmet[0,0]#5  & \@dancer[0,0]... \cr
+    \@symmet[0,0]#4  & \@dancer[0,0]... \cr
+    \@symmet[0,0]#3  & \@dancer[0,0]... \cr
+    \@symmet[0,0]#2  & \@dancer[0,0]... \cr
+    }%
+}
+
+\def\syvLLLLsplus{\@ifnextchar[{\@syvLLLLsplus}{\@syvLLLLsplus[1,1]}}
+\def\@syvLLLLsplus[#1]#2{\@@syvLLLLsplus[#1][#2]}
+\def\@@syvLLLLsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0].+. & \@dancer[0,0]#2  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#3  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#4  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#5  \cr
+    \@symmet[0,0]#9  & \@dancer[0,0]#6  \cr
+    \@symmet[0,0]#8  & \@dancer[0,0]#7  \cr
+    \@symmet[0,0]#7  & \@dancer[0,0]#8  \cr
+    \@symmet[0,0]#6  & \@dancer[0,0]#9  \cr
+    \@symmet[0,0]#5  & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#4  & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#3  & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#2  & \@dancer[0,0].+. \cr
+    }%
+}
+
+%-- 12 x 2 --%
+\def\syvMMMMs{\@ifnextchar[{\@syvMMMMs}{\@syvMMMMs[1,1]}}
+\def\@syvMMMMs[#1]#2{\@@syvMMMMs[#1][#2]}
+\def\@@syvMMMMs[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#9  & \@dancer[0,0]... \cr
+    \@symmet[0,0]#8  & \@dancer[0,0]... \cr
+    \@symmet[0,0]#7  & \@dancer[0,0]... \cr
+    \@symmet[0,0]#6  & \@dancer[0,0]... \cr
+    \@symmet[0,0]#5  & \@dancer[0,0]#2  \cr
+    \@symmet[0,0]#4  & \@dancer[0,0]#3  \cr
+    \@symmet[0,0]#3  & \@dancer[0,0]#4  \cr
+    \@symmet[0,0]#2  & \@dancer[0,0]#5  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#6  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#7  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#8  \cr
+    \@dancer[0,0]... & \@dancer[0,0]#9  \cr
+    }%
+}
+
+\def\syvMMMMsplus{\@ifnextchar[{\@syvMMMMsplus}{\@syvMMMMsplus[1,1]}}
+\def\@syvMMMMsplus[#1]#2{\@@syvMMMMsplus[#1][#2]}
+\def\@@syvMMMMsplus[#1][#2,#3,#4,#5,#6,#7,#8,#9]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#9  & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#8  & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#7  & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#6  & \@dancer[0,0].+. \cr
+    \@symmet[0,0]#5  & \@dancer[0,0]#2  \cr
+    \@symmet[0,0]#4  & \@dancer[0,0]#3  \cr
+    \@symmet[0,0]#3  & \@dancer[0,0]#4  \cr
+    \@symmet[0,0]#2  & \@dancer[0,0]#5  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#6  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#7  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#8  \cr
+    \@dancer[0,0].+. & \@dancer[0,0]#9  \cr
+    }%
+}
+
+%-- bigbone --%
+\def\syvbigbone{\@ifnextchar[{\@syvbigbone}{\@syvbigbone[1,1]}}
+\def\@syvbigbone[#1]#2{\@@syvbigbone[#1][#2]}
+\def\@@syvbigbone[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#3 & \@symmet[0,0]#2 \cr
+    \@symmet[0,0]#5 & \@symmet[0,0]#4 \cr
+    \@symmet[-50,0]#6 \cr
+    \@symmet[-50,0]#7 \cr
+    \@dancer[50,0]#7 \cr
+    \@dancer[50,0]#6 \cr
+    \@dancer[0,0]#4 & \@dancer[0,0]#5 \cr
+    \@dancer[0,0]#2 & \@dancer[0,0]#3 \cr
+    }%
+}
+
+\def\sxhbigbone{\@ifnextchar[{\@sxhbigbone}{\@sxhbigbone[1,1]}}
+\def\@sxhbigbone[#1]#2{\@@sxhbigbone[#1][#2]}
+\def\@@sxhbigbone[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@symmet[0,0]#2   & \@symmet[0,0]#4   & \@symmet[0,50]#6 & \@symmet[0,50]#7 &
+    \@dancer[0,-50]#7 & \@dancer[0,-50]#6 & \@dancer[0,0]#5  & \@dancer[0,0]#3 \cr
+    \@symmet[0,0]#3   & \@symmet[0,0]#5   &                  &                  &
+                      &                   & \@dancer[0,0]#4  & \@dancer[0,0]#2 \cr
+    }%
+}
+
+%-- hourglass --%
+\def\shhourglass{\@ifnextchar[{\@shhourglass}{\@shhourglass[1,1]}}
+\def\@shhourglass[#1]#2{\@@shhourglass[#1][#2]}
+\def\@@shhourglass[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                     & & \@dancer[-50,0]#3 &                  \cr
+    \@dancer[0,50]#2 & & \@dancer[0,-50]#5 & \@dancer[0,50]#4 \cr
+    \@symmet[0,50]#4 & \@symmet[0,-50]#5 & & \@symmet[0,50]#2 \cr
+                     & \@symmet[-50,0]#3 & &                  \cr
+    }%
+}
+
+\def\svhourglass{\@ifnextchar[{\@svhourglass}{\@svhourglass[1,1]}}
+\def\@svhourglass[#1]#2{\@@svhourglass[#1][#2]}
+\def\@@svhourglass[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                 & \@symmet[50,0]#4  & \@dancer[50,0]#2  &                  \cr
+\@symmet[0,50]#3 & \@symmet[-50,0]#5 &                   &                  \cr
+                 &                   & \@dancer[-50,0]#5 & \@dancer[0,50]#3 \cr
+                 & \@symmet[50,0]#2  & \@dancer[50,0]#4  &                  \cr
+    }%
+}
+
+%-- galaxy --%
+\def\shgalaxy{\@ifnextchar[{\@shgalaxy}{\@shgalaxy[1,1]}}
+\def\@shgalaxy[#1]#2{\@@shgalaxy[#1][#2]}
+\def\@@shgalaxy[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                     &         \@dancer[50,0]#3  &       &                  \cr
+    \@symmet[0,50]#5 & \@dancer[0,0]#2 & \@dancer[0,0]#4 &                  \cr
+                     & \@symmet[0,0]#4 & \@symmet[0,0]#2 & \@dancer[0,50]#5 \cr
+                     &         &  \@symmet[50,0]#3       &                  \cr
+    }%
+}
+
+%-- circle --%
+\def\shcircle{\@ifnextchar[{\@shcircle}{\@shcircle[1,1]}}
+\def\@shcircle[#1]#2{\@@shcircle[#1][#2]}
+\def\@@shcircle[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                 &         \@dancer[50,0]#3  &       &                      \cr
+\@symmet[0,50]#5 & \@dancer[-56,56]#2 & \@dancer[56,56]#4 &                 \cr
+                 & \@symmet[56,56]#4 & \@symmet[-56,56]#2 & \@dancer[0,50]#5\cr
+                 &         &  \@symmet[50,0]#3       &                      \cr
+    }%
+}
+
+\def\sscircle{\@ifnextchar[{\@sscircle}{\@sscircle[1,1]}}
+\def\@sscircle[#1]#2{\@@sscircle[#1][#2]}
+\def\@@sscircle[#1][#2,#3,#4,#5]{{%
+    \e@border{-0.11}\w@border{-0.11}\n@border{-0.11}\s@border{-0.11}%
+    \sdform[#1]
+    {
+               & \@dancer[-7,-11]#3 & \@dancer[7,-11]#4  &               \cr
+\@dancer[11,7]#2  &                 &                & \@dancer[-11,7]#5 \cr
+\@symmet[-11,7]#5 &                 &                & \@symmet[11,7]#2  \cr
+               & \@symmet[7,-11]#4  & \@symmet[-7,-11]#3 &               \cr
+    }%
+}}
+
+%-- thar --%
+%   4x4
+\def\shvthar{\@ifnextchar[{\@shvthar}{\@shvthar[1,1]}}
+\def\@shvthar[#1]#2{\@@shvthar[#1][#2]}
+\def\@@shvthar[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                 & \@dancer[50,0]#5 &                  &                  \cr
+                 & \@dancer[50,0]#4 & \@symmet[0,50]#3 & \@symmet[0,50]#2 \cr
+\@dancer[0,50]#2 & \@dancer[0,50]#3 & \@symmet[50,0]#4 &                  \cr
+                 &                  & \@symmet[50,0]#5 &                  \cr
+    }%
+}
+
+\def\slrthar{\@ifnextchar[{\@slrthar}{\@slrthar[1,1]}}
+\def\@slrthar[#1]#2{\@@slrthar[#1][#2]}
+\def\@@slrthar[#1][#2,#3,#4,#5]{{%
+    \e@border{-0.42}\w@border{-0.42}\n@border{-0.42}\s@border{-0.42}%
+    \sdform[#1]
+    {
+    \@dancer[42,-42]#2  &          &          & \@dancer[-42,-42]#5 \cr
+             & \@dancer[14,-14]#3  & \@dancer[-14,-14]#4 &          \cr
+             & \@symmet[-14,-14]#4 & \@symmet[14,-14]#3  &          \cr
+    \@symmet[-42,-42]#5 &          &          & \@symmet[42,-42]#2  \cr
+    }%
+}}
+
+%   4.5x4.5
+\def\shvThar{\@ifnextchar[{\@shvThar}{\@shvThar[1,1]}}
+\def\@shvThar[#1]#2{\@@shvThar[#1][#2]}
+\def\@@shvThar[#1][#2,#3,#4,#5]{{%
+    \e@border{-0.25}\w@border{-0.25}\n@border{-0.25}\s@border{-0.25}%
+    \sdform[#1]
+    {
+                 &          & \@dancer[0,-25]#5 &        &                  \cr
+                 &          & \@dancer[0,-25]#4 &        &                  \cr
+\@dancer[25,0]#2 & \@dancer[25,0]#3 & & \@symmet[25,0]#3 & \@symmet[25,0]#2 \cr
+                 &          & \@symmet[0,-25]#4 &        &                  \cr
+                 &          & \@symmet[0,-25]#5 &        &                  \cr
+    }%
+}}
+
+\def\slrThar{\@ifnextchar[{\@slrThar}{\@slrThar[1,1]}}
+\def\@slrThar[#1]#2{\@@slrThar[#1][#2]}
+\def\@@slrThar[#1][#2,#3,#4,#5]{{%
+    \e@border{-0.26}\w@border{-0.26}\n@border{-0.26}\s@border{-0.26}%
+    \sdform[#1]
+    {
+    \@dancer[26,-26]#2  &        &        & \@dancer[-26,-26]#5 \cr
+              & \@dancer[-3,3]#3 & \@dancer[3,3]#4  &           \cr
+              & \@symmet[3,3]#4  & \@symmet[-3,3]#3 &           \cr
+    \@symmet[-26,-26]#5 &        &        & \@symmet[26,-26]#2  \cr
+    }%
+}}
+
+%   5x5
+\def\sHVthar{\@ifnextchar[{\@sHVthar}{\@sHVthar[1,1]}}
+\def\@sHVthar[#1]#2{\@@sHVthar[#1][#2]}
+\def\@@sHVthar[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                &          & \@dancer[0,0]#5 &        &                 \cr
+                &          & \@dancer[0,0]#4 &        &                 \cr
+\@dancer[0,0]#2 & \@dancer[0,0]#3 & & \@symmet[0,0]#3 & \@symmet[0,0]#2 \cr
+                &          & \@symmet[0,0]#4 &        &                 \cr
+                &          & \@symmet[0,0]#5 &        &                 \cr
+    }%
+}
+
+\def\sLRthar{\@ifnextchar[{\@sLRthar}{\@sLRthar[1,1]}}
+\def\@sLRthar[#1]#2{\@@sLRthar[#1][#2]}
+\def\@@sLRthar[#1][#2,#3,#4,#5]{{%
+    \e@border{-0.08}\w@border{-0.08}\n@border{-0.08}\s@border{-0.08}%
+    \sdform[#1]
+    {
+    \@dancer[8,-8]#2  &          &          & \@dancer[-8,-8]#5 \cr
+            & \@dancer[-21,21]#3 & \@dancer[21,21]#4  &         \cr
+            & \@symmet[21,21]#4  & \@symmet[-21,21]#3 &         \cr
+    \@symmet[-8,-8]#5 &          &          & \@symmet[8,-8]#2  \cr
+    }%
+}}
+
+%   4x5
+\def\shVthar{\@ifnextchar[{\@shVthar}{\@shVthar[1,1]}}
+\def\@shVthar[#1]#2{\@@shVthar[#1][#2]}
+\def\@@shVthar[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                &           \@dancer[50,0]#5 &        &               \cr
+                &           \@dancer[50,0]#4 &        &               \cr
+\@dancer[0,0]#2 & \@dancer[0,0]#3 & \@symmet[0,0]#3 & \@symmet[0,0]#2 \cr
+                &          & \@symmet[50,0]#4         &               \cr
+                &          & \@symmet[50,0]#5         &               \cr
+    }%
+}
+
+%   5x4
+\def\sHvthar{\@ifnextchar[{\@sHvthar}{\@sHvthar[1,1]}}
+\def\@sHvthar[#1]#2{\@@sHvthar[#1][#2]}
+\def\@@sHvthar[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                 & & \@dancer[0,0]#5 &                  &                  \cr
+                 & & \@dancer[0,0]#4 & \@symmet[0,50]#3 & \@symmet[0,50]#2 \cr
+\@dancer[0,50]#2 & \@dancer[0,50]#3  & \@symmet[0,0]#4  & &                \cr
+                 &                   & \@symmet[0,0]#5  & &                \cr
+    }%
+}
+
+%-- stars --%
+%   2x2
+\def\systars{\@ifnextchar[{\@systars}{\@systars[1,1]}}
+\def\@systars[#1]#2{\@@systars[#1][#2]}
+\def\@@systars[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+        \@dancer[50,0]#3  & \@dancer[0,-50]#4 \cr
+        \@dancer[0,50]#2  & \@dancer[-50,0]#5 \cr
+        \@symmet[-50,0]#5 & \@symmet[0,50]#2  \cr
+        \@symmet[0,-50]#4 & \@symmet[50,0]#3  \cr
+    }%
+}
+
+\def\sxstars{\@ifnextchar[{\@sxstars}{\@sxstars[1,1]}}
+\def\@sxstars[#1]#2{\@@sxstars[#1][#2]}
+\def\@@sxstars[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+\@symmet[-50,0]#4 & \@symmet[0,50]#5 & \@dancer[50,0]#2 & \@dancer[0,-50]#3 \cr
+\@symmet[0,-50]#3 & \@symmet[50,0]#2 & \@dancer[0,50]#5 & \@dancer[-50,0]#4 \cr
+    }%
+}
+
+\def\slstars{\@ifnextchar[{\@slstars}{\@slstars[1,1]}}
+\def\@slstars[#1]#2{\@@slstars[#1][#2]}
+\def\@@slstars[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+\@dancer[50,0]#3 & \@dancer[0,-50]#4 &                   &                  \cr
+\@dancer[0,50]#2 & \@dancer[-50,0]#5 &                   &                  \cr
+                 &                   & \@symmet[-50,0]#5 & \@symmet[0,50]#2 \cr
+                 &                   & \@symmet[0,-50]#4 & \@symmet[50,0]#3 \cr
+    }%
+}
+
+\def\srstars{\@ifnextchar[{\@srstars}{\@srstars[1,1]}}
+\def\@srstars[#1]#2{\@@srstars[#1][#2]}
+\def\@@srstars[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                  &                  & \@dancer[50,0]#2 & \@dancer[0,-50]#3 \cr
+                  &                  & \@dancer[0,50]#5 & \@dancer[-50,0]#4 \cr
+\@symmet[-50,0]#4 & \@symmet[0,50]#5 &                  &                   \cr
+\@symmet[0,-50]#3 & \@symmet[50,0]#2 &                  &                   \cr
+    }%
+}
+
+%   2.5x2.5
+\def\syStars{\@ifnextchar[{\@syStars}{\@syStars[1,1]}}
+\def\@syStars[#1]#2{\@@syStars[#1][#2]}
+\def\@@syStars[#1][#2,#3,#4,#5]{{%
+    \e@border{-0.25}\w@border{-0.25}\n@border{-0.50}\s@border{-0.50}%
+    \sdform[#1]
+    {
+                            & \@dancer[0,-50]#3 &                     \cr
+        \@dancer[25,-25]#2  &                   & \@dancer[-25,-25]#4 \cr
+                            & \@dancer[0,0]#5   &                     \cr
+                            & \@symmet[0,0]#5   &                     \cr
+        \@symmet[-25,-25]#4 &                   & \@symmet[25,-25]#2  \cr
+                            & \@symmet[0,-50]#3 &                     \cr
+    }%
+}}
+
+\def\sxStars{\@ifnextchar[{\@sxStars}{\@sxStars[1,1]}}
+\def\@sxStars[#1]#2{\@@sxStars[#1][#2]}
+\def\@@sxStars[#1][#2,#3,#4,#5]{{%
+    \e@border{-0.50}\w@border{-0.50}\n@border{-0.25}\s@border{-0.25}%
+    \sdform[#1]
+    {
+        & \@symmet[-25,25]#4  &      &      & \@dancer[-25,-25]#2 &         \cr
+\@symmet[-50,0]#3 && \@symmet[0,0]#5 & \@dancer[0,0]#5 && \@dancer[-50,0]#3 \cr
+        & \@symmet[-25,-25]#2 &      &      & \@dancer[-25,25]#4  &         \cr
+    }%
+}}
+
+\def\slStars{\@ifnextchar[{\@slStars}{\@slStars[1,1]}}
+\def\@slStars[#1]#2{\@@slStars[#1][#2]}
+\def\@@slStars[#1][#2,#3,#4,#5]{{%
+    \e@border{-0.50}\w@border{-0.50}\n@border{-0.50}\s@border{-0.50}%
+    \sdform[#1]
+    {
+         & \@dancer[25,-50]#3 &          &  &                    &          \cr
+\@dancer[50,-25]#2 & & \@dancer[0,-25]#4 &  &                    &          \cr
+         & \@dancer[25,0]#5   &          &  &                    &          \cr
+         &                    &  &          & \@symmet[25,0]#5   &          \cr
+         &                    &  & \@symmet[0,-25]#4 & & \@symmet[50,-25]#2 \cr
+         &                    &  &          & \@symmet[25,-50]#3 &          \cr
+    }%
+}}
+
+\def\srStars{\@ifnextchar[{\@srStars}{\@srStars[1,1]}}
+\def\@srStars[#1]#2{\@@srStars[#1][#2]}
+\def\@@srStars[#1][#2,#3,#4,#5]{{%
+    \e@border{-0.50}\w@border{-0.50}\n@border{-0.50}\s@border{-0.50}%
+    \sdform[#1]
+    {
+        &                     & &         & \@dancer[-25,-50]#2 &           \cr
+        &                     & & \@dancer[0,-25]#5 & & \@dancer[-50,-25]#3 \cr
+        &                     & &         & \@dancer[-25,0]#4   &           \cr
+        & \@symmet[-25,0]#4   &           & &                   &           \cr
+\@symmet[-50,-25]#3 & & \@symmet[0,-25]#5 & &                   &           \cr
+        & \@symmet[-25,-50]#2 &           & &                   &           \cr
+    }%
+}}
+
+%-- Ts --%
+\def\sywtees{\@ifnextchar[{\@sywtees}{\@sywtees[1,1]}}
+\def\@sywtees[#1]#2{\@@sywtees[#1][#2]}
+\def\@@sywtees[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                 &                  &         \@dancer[50,0]#2 &          \cr
+\@dancer[0,50]#5 & \@dancer[0,50]#4 &         \@dancer[50,0]#3 &          \cr
+      &  \@symmet[50,0]#3           & \@symmet[0,50]#4 & \@symmet[0,50]#5 \cr
+      &  \@symmet[50,0]#2           &                  &                  \cr
+    }%
+}
+
+\def\syetees{\@ifnextchar[{\@syetees}{\@syetees[1,1]}}
+\def\@syetees[#1]#2{\@@syetees[#1][#2]}
+\def\@@syetees[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+     &  \@dancer[-50,0]#3           &                  &                  \cr
+     &  \@dancer[-50,0]#2           & \@dancer[0,50]#4 & \@dancer[0,50]#5 \cr
+\@symmet[0,50]#5 & \@symmet[0,50]#4 &        \@symmet[-50,0]#2 &          \cr
+                 &                  &        \@symmet[-50,0]#3 &          \cr
+    }%
+}
+
+\def\systees{\@ifnextchar[{\@systees}{\@systees[1,1]}}
+\def\@systees[#1]#2{\@@systees[#1][#2]}
+\def\@@systees[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+    \@dancer[0,0]#2  & \@dancer[0,0]#3  \cr
+    \@dancer[50,0]#4 &                  \cr
+    \@dancer[50,0]#5 &                  \cr
+                     & \@symmet[50,0]#5 \cr
+                     & \@symmet[50,0]#4 \cr
+    \@symmet[0,0]#3  & \@symmet[0,0]#2  \cr
+    }%
+}
+
+\def\syntees{\@ifnextchar[{\@syntees}{\@syntees[1,1]}}
+\def\@syntees[#1]#2{\@@syntees[#1][#2]}
+\def\@@syntees[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+    \@dancer[50,0]#5 &                  \cr
+    \@dancer[50,0]#4 &                  \cr
+    \@dancer[0,0]#3  & \@dancer[0,0]#2  \cr
+    \@symmet[0,0]#2  & \@symmet[0,0]#3  \cr
+                     & \@symmet[50,0]#4 \cr
+                     & \@symmet[50,0]#5 \cr
+    }%
+}
+
+\def\sxwtees{\@ifnextchar[{\@sxwtees}{\@sxwtees[1,1]}}
+\def\@sxwtees[#1]#2{\@@sxwtees[#1][#2]}
+\def\@@sxwtees[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+         \@symmet[0,0]#3         & \@symmet[0,50]#4 & \@symmet[0,50]#5 &
+                 &                  &       \@dancer[0,0]#2           \cr
+         \@symmet[0,0]#2         &                  &                  &
+\@dancer[0,50]#5 & \@dancer[0,50]#4 &       \@dancer[0,0]#3           \cr
+    }%
+}
+
+\def\sxetees{\@ifnextchar[{\@sxetees}{\@sxetees[1,1]}}
+\def\@sxetees[#1]#2{\@@sxetees[#1][#2]}
+\def\@@sxetees[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+\@symmet[0,50]#5 & \@symmet[0,50]#4 &        \@symmet[0,0]#2            &
+        \@dancer[0,0]#3           &                  &                  \cr
+                 &                  &        \@symmet[0,0]#3            &
+        \@dancer[0,0]#2           & \@dancer[0,50]#4 & \@dancer[0,50]#5 \cr
+    }%
+}
+
+%-- spindle --%
+\def\shspindle{\@ifnextchar[{\@shspindle}{\@shspindle[1,1]}}
+\def\@shspindle[#1]#2{\@@shspindle[#1][#2]}
+\def\@@shspindle[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+\@dancer[0,-50]#2 & \@dancer[0,0]#3 & \@dancer[0,0]#4 & \@dancer[0,0]#5  &  \cr
+  & \@symmet[0,0]#5 & \@symmet[0,0]#4 & \@symmet[0,0]#3 & \@symmet[0,-50]#2 \cr
+    }%
+}
+
+\def\svspindle{\@ifnextchar[{\@svspindle}{\@svspindle[1,1]}}
+\def\@svspindle[#1]#2{\@@svspindle[#1][#2]}
+\def\@@svspindle[#1][#2,#3,#4,#5]{%
+    \sdform[#1]
+    {
+                      & \@dancer[-50,0]#2 \cr
+    \@symmet[0,0]#5   & \@dancer[0,0]#3   \cr
+    \@symmet[0,0]#4   & \@dancer[0,0]#4   \cr
+    \@symmet[0,0]#3   & \@dancer[0,0]#5   \cr
+    \@symmet[-50,0]#2 &                   \cr
+    }%
+}
+
+%-- triple setup --%
+\def\syhtridiamonds{\@ifnextchar[{\@syhtridiamonds}{\@syhtridiamonds[1,1]}}
+\def\@syhtridiamonds[#1]#2{\@@syhtridiamonds[#1][#2]}
+\def\@@syhtridiamonds[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+                     & \@dancer[0,0]#3 &                  \cr
+    \@dancer[0,50]#2 & \@dancer[0,0]#5 & \@dancer[0,50]#4 \cr
+                     & \@dancer[0,0]#7 & \@symmet[0,50]#6 \cr
+    \@dancer[0,50]#6 & \@symmet[0,0]#7 &                  \cr
+    \@symmet[0,50]#4 & \@symmet[0,0]#5 & \@symmet[0,50]#2 \cr
+                     & \@symmet[0,0]#3 &                  \cr
+    }%
+}
+
+\def\syvtridiamonds{\@ifnextchar[{\@syvtridiamonds}{\@syvtridiamonds[1,1]}}
+\def\@syvtridiamonds[#1]#2{\@@syvtridiamonds[#1][#2]}
+\def\@@syvtridiamonds[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+              \@dancer[50,0]#2 &       \cr
+    \@dancer[0,0]#5 & \@dancer[0,0]#3  \cr
+              \@dancer[50,0]#4 &       \cr
+              \@dancer[50,0]#6 &       \cr
+    \@symmet[0,0]#7 & \@dancer[0,0]#7  \cr
+              & \@symmet[50,0]#6       \cr
+              & \@symmet[50,0]#4       \cr
+    \@symmet[0,0]#3 & \@symmet[0,0]#5  \cr
+              & \@symmet[50,0]#2       \cr
+    }%
+}
+
+\def\sxvtridiamonds{\@ifnextchar[{\@sxvtridiamonds}{\@sxvtridiamonds[1,1]}}
+\def\@sxvtridiamonds[#1]#2{\@@sxvtridiamonds[#1][#2]}
+\def\@@sxvtridiamonds[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+                     & \@symmet[50,0]#4 &
+    \@dancer[50,0]#6 &                  &
+    \@dancer[50,0]#2 &                  \cr
+    \@symmet[0,0]#3  & \@symmet[0,0]#5  &
+    \@symmet[0,0]#7  & \@dancer[0,0]#7  &
+    \@dancer[0,0]#5  & \@dancer[0,0]#3  \cr
+                     & \@symmet[50,0]#2 &
+                     & \@symmet[50,0]#6 &
+    \@dancer[50,0]#4 &                  \cr
+    }%
+}
+
+\def\sxhtridiamonds{\@ifnextchar[{\@sxhtridiamonds}{\@sxhtridiamonds[1,1]}}
+\def\@sxhtridiamonds[#1]#2{\@@sxhtridiamonds[#1][#2]}
+\def\@@sxhtridiamonds[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@symmet[0,50]#2 & \@symmet[0,0]#3 & \@symmet[0,50]#4 &
+    \@symmet[0,50]#6 & \@symmet[0,0]#7 &                  &
+                     & \@dancer[0,0]#5 &                  \cr
+                     & \@symmet[0,0]#5 &                  &
+                     & \@dancer[0,0]#7 & \@dancer[0,50]#6 &
+    \@dancer[0,50]#4 & \@dancer[0,0]#3 & \@dancer[0,50]#2 \cr
+    }%
+}
+
+\def\syhtwmstar{\@ifnextchar[{\@syhtwmstar}{\@syhtwmstar[1,1]}}
+\def\@syhtwmstar[#1]#2{\@@syhtwmstar[#1][#2]}
+\def\@@syhtwmstar[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+    \@dancer[50,0]#2 &                  \cr
+    \@dancer[50,0]#3 &                  \cr
+    \@dancer[50,0]#4 & \@dancer[0,-50]#5\cr
+    \@dancer[0,50]#7 & \@dancer[-50,0]#6\cr
+    \@symmet[-50,0]#6& \@symmet[0,50]#7 \cr
+    \@symmet[0,-50]#5& \@symmet[50,0]#4 \cr
+                     & \@symmet[50,0]#3 \cr
+                     & \@symmet[50,0]#2 \cr
+    }%
+}
+
+\def\sxvtwmstar{\@ifnextchar[{\@sxvtwmstar}{\@sxvtwmstar[1,1]}}
+\def\@sxvtwmstar[#1]#2{\@@sxvtwmstar[#1][#2]}
+\def\@@sxvtwmstar[#1][#2,#3,#4,#5,#6,#7]{%
+    \sdform[#1]
+    {
+                     &                  & \@symmet[-50,0]#5&
+    \@symmet[0,50]#6 & \@dancer[50,0]#7 & \@dancer[0,-50]#4&
+    \@dancer[0,-50]#3& \@dancer[0,-50]#2\cr
+    \@symmet[0,-50]#2& \@symmet[0,-50]#3&
+    \@symmet[0,-50]#4& \@symmet[50,0]#7 & \@dancer[0,50]#6 &
+    \@dancer[-50,0]#5&                  &                  \cr
+    }%
+}
+
+%------------------------------------------------------------------------------
