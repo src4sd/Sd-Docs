@@ -1,23 +1,28 @@
 Sd-Docs: Square dance documentation
 
-This directory holds the source files for various documentation I have
-worked on.  These are typically LaTeX and converted to PDF using
-"pdflatex" and various corresponding *.sty files that support drawing
-diagrams of square dance formations.
+This directory holds the source files for various square dance definitions
+and articles.  The source files are named *.tex and can be converted to PDF
+using pdflatex and various corresponding *.sty files.
 
-The PDF files are generally publicly available on various web sites
-such as:
+A complete description of producing PDF files from these files is
+given at:
+https://challengedance.org/latexmacros.html
 
-https://callerlab.org
-https://challengedance.org
+There are two types of LaTeX files in this repository (all named *.tex):
 
-Some files here may only be portions of the publicly available PDF files.
-For example, the Callerlab documents are maintained in MS Word by
-the Callerlab Home Office.  The portions available here use
-the "standalone" package to create diagrams in PNG format that
-are then manually imported into the official MS Word documents.
+(1) Full technical articles, such as my papers on Mimic.
+    Updates require editing the *.tex file and rerunning pdflatex.
+
+(2) Standalone pictures (dancer diagrams) written for Callerlab.
+    These are then imported into MS Word documents.
+    All Callerlab definitions are currently maintained in MS Word
+    by the Callerlab Home Office.  
+    Updates to the diagrams require rerunning pdflatex with suitable
+    options to also produce a PNG file, and then manually importing
+    the PNG file into the appropriate MS Word document.
+
+The files designed to create standalone pictures all reference the
+"standalone" package.
 
 Sue Curtis
 May 26, 2023
-
-
