@@ -1,0 +1,23 @@
+Sd-Docs: Square dance documentation
+
+This directory holds the source files for various documentation I have
+worked on.  These are typically LaTeX and converted to PDF using
+"pdflatex" and various corresponding *.sty files that support drawing
+diagrams of square dance formations.
+
+The PDF files are generally publicly available on various web sites
+such as:
+
+https://callerlab.org
+https://challengedance.org
+
+Some files here may only be portions of the publicly available PDF files.
+For example, the Callerlab documents are maintained in MS Word by
+the Callerlab Home Office.  The portions available here use
+the "standalone" package to create diagrams in PNG format that
+are then manually imported into the official MS Word documents.
+
+Sue Curtis
+May 26, 2023
+
+
